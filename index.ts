@@ -6,10 +6,11 @@ import * as bodyParser from "body-parser";
 // Create Express HTTP server
 const app: express.Application = express().use(bodyParser.json());
 
-debug("Coding for All");
+const log = debug("coding-for-all");
+log("Testing");
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 1337, () => debug("Webhook is listening"));
+app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
 
 // Creates the endpoint for our webhook
 app.post("/webhook", (req, res) => {
@@ -21,7 +22,7 @@ app.post("/webhook", (req, res) => {
             // Gets the message. entry.messaging is an array, but
             // will only ever contain one message, so we get index 0
             const webhookEvent = entry.messaging[0];
-            debug(webhookEvent.toString());
+            log(webhookEvent.toString());
         });
 
         // Returns a '200 OK' response to all requests
@@ -48,7 +49,7 @@ app.get("/webhook", (req, res) => {
         // Checks the mode and token sent is correct
         if (mode === "subscribe" && token === VERIFY_TOKEN) {
             // Responds with the challenge token from the request
-            debug("WEBHOOK_VERIFIED");
+            log("WEBHOOK_VERIFIED");
             res.status(200).send(challenge);
         } else {
             // Responds with '403 Forbidden' if verify tokens do not match
