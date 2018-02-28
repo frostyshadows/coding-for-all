@@ -4,7 +4,7 @@
   "description": "a messenger bot for teaching everyone to code",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "build": "tsc && tslint *.ts && echo 'Finished without error!' || echo 'Error!'"
   },
   "repository": {
     "type": "git",
@@ -26,12 +26,14 @@
   "homepage": "https://github.com/frostyshadows/coding-for-all#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "debug": "^3.1.0",
     "express": "^4.16.2"
   },
   "devDependencies": {
+    "@types/debug": "0.0.30",
+    "@types/express": "^4.11.1",
     "@types/node": "8.0.56",
-    "ts-node": "4.1.0",
     "tslint": "5.8.0",
-    "typescript": "2.6.2"
+    "typescript": "^2.7.2"
   }
 }
