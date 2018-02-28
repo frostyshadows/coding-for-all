@@ -1,0 +1,27 @@
+{
+  "name": "coding-for-all",
+  "version": "1.0.0",
+  "description": "a messenger bot for teaching everyone to code",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frostyshadows/coding-for-all.git"
+  },
+  "keywords": [
+    "messenger",
+    "bot",
+    "learn",
+    "code",
+    "coding",
+    "education"
+  ],
+  "author": "Sherry Yuan and Russell Blickhan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frostyshadows/coding-for-all/issues"
+  },
+  "homepage": "https://github.com/frostyshadows/coding-for-all#readme"
+}
