@@ -1,10 +1,11 @@
 // Import dependencies
+import * as bodyParser from "body-parser";
 import * as debug from "debug";
 import * as express from "express";
-import * as bodyParser from "body-parser";
+import * as helmet from "helmet";
 
 // Create Express HTTP server
-const app: express.Application = express().use(bodyParser.json());
+const app: express.Application = express().use(bodyParser.json()).use(helmet());
 
 const log = debug("codingforall::debug");
 const trace = debug("codingforall::trace");
