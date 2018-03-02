@@ -3,12 +3,19 @@ import * as bodyParser from "body-parser";
 import * as debug from "debug";
 import * as express from "express";
 import * as helmet from "helmet";
+import {isNullOrUndefined} from "util";
 
 // Create Express HTTP server
 const app: express.Application = express().use(bodyParser.json()).use(helmet());
 
 const log = debug("codingforall::debug");
 const trace = debug("codingforall::trace");
+
+const pageAccessToken: string | undefined = process.env.PAGE_ACCESS_TOKEN;
+if (isNullOrUndefined(pageAccessToken)) {
+    log("Missing page access token in env vars");
+    process.exit(-1);
+}
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
