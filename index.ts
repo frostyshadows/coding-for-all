@@ -3,6 +3,7 @@ import * as bodyParser from "body-parser";
 import * as debug from "debug";
 import * as express from "express";
 import * as helmet from "helmet";
+import * as request from "request";
 import {isNullOrUndefined} from "util";
 
 // Create Express HTTP server
@@ -16,7 +17,7 @@ const trace = debug("codingforall::trace");
 const pageAccessToken: string | undefined = process.env.PAGE_ACCESS_TOKEN;
 if (isNullOrUndefined(pageAccessToken)) {
     log("Missing page access token in env vars");
-    process.exit(-1);
+    process.exit(1);
 }
 
 // Set server port
@@ -34,6 +35,15 @@ app.post("/webhook", (req, res) => {
             // will only ever contain one message, so we get index 0
             const webhookEvent = entry.messaging[0];
             log(webhookEvent.toString());
+
+            // Get the sender PSID
+            const senderID: string = webhookEvent.sender.id;
+            // Route event to appropriate handler
+            if (webhookEvent.message) {
+                handleMessage(senderID, webhookEvent.message);
+            } else if (webhookEvent.postback) {
+                handlePostback(senderID, webhookEvent.postback);
+            }
         });
 
         // Returns a '200 OK' response to all requests
@@ -71,3 +81,62 @@ app.get("/webhook", (req, res) => {
         res.sendStatus(403);
     }
 });
+
+// Handles message events
+function handleMessage(senderID: PSID, message: any) {
+    trace("handleMessage");
+    if (message.text) {
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            messageText: "You sent the message: " + message.text + ". Now send me an image!",
+        });
+    } else {
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            messageText: "Message had no text.",
+        });
+    }
+}
+
+// Handles postback events
+function handlePostback(senderID: PSID, postback: any) {
+    // TODO
+}
+
+// Send a message via the send api
+function send(message: ISendMessage) {
+    trace("send");
+    request({
+        uri: "https://graph.facebook.com/v2.6/me/messages",
+        qs: {access_token: pageAccessToken},
+        method: "POST",
+        json: {
+            recipient: {id : message.recipient},
+            message: {text: message.messageText},
+        },
+    }, (err, res, body) => {
+        if (err) {
+            log("Unable to send message: " + err);
+        } else {
+            log("Message sent successfully");
+        }
+    });
+}
+
+type PSID = string;
+
+// Message to be sent to send api
+interface ISendMessage {
+    type: MessagingType;
+    recipient: PSID;
+    messageText: string;
+}
+
+// Possible types for a message sent to send api
+enum MessagingType {
+    Response = "RESPONSE",
+    Update = "UPDATE",
+    MessageTag = "MESSAGE_TAG",
+}
