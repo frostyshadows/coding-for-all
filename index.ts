@@ -128,6 +128,7 @@ function send(message: ISendMessage) {
 type PSID = string;
 
 // Message to be sent to send api
+// See https://developers.facebook.com/docs/messenger-platform/reference/send-api
 interface ISendMessage {
     type: MessagingType;
     recipient: PSID;
@@ -135,6 +136,7 @@ interface ISendMessage {
 }
 
 // Possible types for a message sent to send api
+// See https://developers.facebook.com/docs/messenger-platform/send-messages/#messaging_types
 enum MessagingType {
     Response = "RESPONSE",
     Update = "UPDATE",
