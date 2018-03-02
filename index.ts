@@ -37,7 +37,7 @@ app.post("/webhook", (req, res) => {
         });
 
         // Returns a '200 OK' response to all requests
-        res.status(200).send("EVENT_RECEIVED\n");
+        res.status(200).send("EVENT_RECEIVED");
     } else {
         // Returns a '404 Not Found' if event is not from a page subscription
         res.sendStatus(404);
@@ -61,7 +61,7 @@ app.get("/webhook", (req, res) => {
         // Checks the mode and token sent is correct
         if (mode === "subscribe" && token === VERIFY_TOKEN) {
             // Responds with the challenge token from the request
-            log("WEBHOOK_VERIFIED\n");
+            log("WEBHOOK_VERIFIED");
             res.status(200).send(challenge);
         } else {
             // Responds with '403 Forbidden' if verify tokens do not match
