@@ -151,6 +151,7 @@ function send(message: ISendMessage) {
         qs: {access_token: pageAccessToken},
         method: "POST",
         json: {
+            messaging_type: message.type,
             recipient: {id: message.recipient},
             message: message.body,
         },
