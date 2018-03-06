@@ -85,24 +85,62 @@ app.get("/webhook", (req, res) => {
 // Handles message events
 function handleMessage(senderID: PSID, message: any) {
     trace("handleMessage");
+    let responseBody = {};
     if (message.text) {
-        send({
-            type: MessagingType.Response,
-            recipient: senderID,
-            messageText: "You sent the message: " + message.text + ". Now send me an image!",
-        });
+        responseBody = { text: "You sent the message: " + message.text + ". Now send me an image!" };
+    } else if (message.attachments) {
+        const attachmentUrl: string = message.attachments[0].payload.url;
+        responseBody = {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "generic",
+                    elements: [{
+                        title: "Is this the right picture?",
+                        subtitle: "Tap a button to answer.",
+                        image_url: attachmentUrl,
+                        buttons: [
+                            {
+                                type: "postback",
+                                title: "Yes!",
+                                payload: "yes",
+                            },
+                            {
+                                type: "postback",
+                                title: "No!",
+                                payload: "no",
+                            },
+                        ],
+                    }],
+                },
+            },
+        };
     } else {
-        send({
-            type: MessagingType.Response,
-            recipient: senderID,
-            messageText: "Message had no text.",
-        });
+        responseBody = { text: "Message had no text." };
     }
+
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: responseBody,
+    });
 }
 
 // Handles postback events
 function handlePostback(senderID: PSID, postback: any) {
-    // TODO
+    trace("handlePostback");
+    const payload = postback.payload;
+    let responseBody = {};
+    if (payload === "yes") {
+        responseBody = { text: "Thanks!" };
+    } else if (payload === "no") {
+       responseBody = { text: "Oops, try sending another image." };
+    }
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: responseBody,
+    });
 }
 
 // Send a message via the send api
@@ -113,8 +151,8 @@ function send(message: ISendMessage) {
         qs: {access_token: pageAccessToken},
         method: "POST",
         json: {
-            recipient: {id : message.recipient},
-            message: {text: message.messageText},
+            recipient: {id: message.recipient},
+            message: message.body,
         },
     }, (err, res, body) => {
         if (err) {
@@ -132,7 +170,8 @@ type PSID = string;
 interface ISendMessage {
     type: MessagingType;
     recipient: PSID;
-    messageText: string;
+    // TODO make this type safe somehow
+    body: any;
 }
 
 // Possible types for a message sent to send api
