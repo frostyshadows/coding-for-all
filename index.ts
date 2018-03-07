@@ -85,12 +85,54 @@ app.get("/webhook", (req, res) => {
 // Handles message events
 function handleMessage(senderID: PSID, message: any) {
     trace("handleMessage");
-    let responseBody = {};
     if (message.text) {
-        responseBody = { text: "You sent the message: " + message.text + ". Now send me an image!" };
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: {
+                text: "Hello, welcome to Coding For All!" +
+                "Whether you're a beginner or a professional programmer," +
+                "want to go through a whole MOOC or read a 5 minute article," +
+                "we have something for you. First, we'd like to know little bit about you.",
+            },
+        });
+        const experienceBody = {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "generic",
+                    elements: [{
+                        title: "How much programming experience do you have?",
+                        subtitle: "Tap a button to answer.",
+                        buttons: [
+                            {
+                                type: "postback",
+                                title: "None",
+                                payload: "exp_none",
+                            },
+                            {
+                                type: "postback",
+                                title: "Some",
+                                payload: "exp_some",
+                            },
+                            {
+                                type: "postback",
+                                title: "Lots",
+                                payload: "exp_lots",
+                            },
+                        ],
+                    }],
+                },
+            },
+        };
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: experienceBody,
+        });
     } else if (message.attachments) {
         const attachmentUrl: string = message.attachments[0].payload.url;
-        responseBody = {
+        const responseBody = {
             attachment: {
                 type: "template",
                 payload: {
@@ -115,15 +157,19 @@ function handleMessage(senderID: PSID, message: any) {
                 },
             },
         };
-    } else {
-        responseBody = { text: "Message had no text." };
-    }
 
-    send({
-        type: MessagingType.Response,
-        recipient: senderID,
-        body: responseBody,
-    });
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: responseBody,
+        });
+    } else {
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: {text: "Message had no text."},
+        });
+    }
 }
 
 // Handles postback events
@@ -132,9 +178,9 @@ function handlePostback(senderID: PSID, postback: any) {
     const payload = postback.payload;
     let responseBody = {};
     if (payload === "yes") {
-        responseBody = { text: "Thanks!" };
+        responseBody = {text: "Thanks!"};
     } else if (payload === "no") {
-       responseBody = { text: "Oops, try sending another image." };
+        responseBody = {text: "Oops, try sending another image."};
     }
     send({
         type: MessagingType.Response,
