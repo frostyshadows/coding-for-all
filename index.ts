@@ -4,7 +4,7 @@ import * as debug from "debug";
 import * as express from "express";
 import * as helmet from "helmet";
 import * as request from "request";
-import {isNullOrUndefined} from "util";
+import {isNull, isNullOrUndefined} from "util";
 
 // Create Express HTTP server
 const app: express.Application = express().use(bodyParser.json()).use(helmet());
@@ -90,7 +90,7 @@ function handleMessage(senderID: PSID, message: any) {
             type: MessagingType.Response,
             recipient: senderID,
             body: {
-                text: "Hello, welcome to Coding For All! " +
+                text: "Hello, welcome to Coding For Everyone! " +
                 "Whether you're a beginner or a professional programmer, " +
                 "want to go through a whole MOOC or read a 5 minute article, " +
                 "we have something for you. First, we'd like to know little bit about you.",
@@ -130,44 +130,11 @@ function handleMessage(senderID: PSID, message: any) {
             recipient: senderID,
             body: experienceBody,
         });
-    } else if (message.attachments) {
-        const attachmentUrl: string = message.attachments[0].payload.url;
-        const responseBody = {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "generic",
-                    elements: [{
-                        title: "Is this the right picture?",
-                        subtitle: "Tap a button to answer.",
-                        image_url: attachmentUrl,
-                        buttons: [
-                            {
-                                type: "postback",
-                                title: "Yes!",
-                                payload: "yes",
-                            },
-                            {
-                                type: "postback",
-                                title: "No!",
-                                payload: "no",
-                            },
-                        ],
-                    }],
-                },
-            },
-        };
-
-        send({
-            type: MessagingType.Response,
-            recipient: senderID,
-            body: responseBody,
-        });
     } else {
         send({
             type: MessagingType.Response,
             recipient: senderID,
-            body: {text: "Message had no text."},
+            body: {text: "Sorry, we don't accept attachments!"},
         });
     }
 }
@@ -175,18 +142,26 @@ function handleMessage(senderID: PSID, message: any) {
 // Handles postback events
 function handlePostback(senderID: PSID, postback: any) {
     trace("handlePostback");
-    const payload = postback.payload;
-    let responseBody = {};
-    if (payload === "yes") {
-        responseBody = {text: "Thanks!"};
-    } else if (payload === "no") {
-        responseBody = {text: "Oops, try sending another image."};
+    const payload: string = postback.payload;
+    const type: string = payload.split("_")[0];
+    const value: string = payload.split("_")[1];
+    if (isNullOrUndefined(type) || isNullOrUndefined(value)) {
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: {text: "Sorry, something went wrong!"},
+        });
+    } else {
+       switch (type) {
+           case "exp":
+               handleExpPostback(senderID, value);
+               break;
+       }
     }
-    send({
-        type: MessagingType.Response,
-        recipient: senderID,
-        body: responseBody,
-    });
+}
+
+function handleExpPostback(senderID: PSID, expLevel: string) {
+    // TODO
 }
 
 // Send a message via the send api
@@ -227,4 +202,10 @@ enum MessagingType {
     Response = "RESPONSE",
     Update = "UPDATE",
     MessageTag = "MESSAGE_TAG",
+}
+
+enum ExpLevel {
+    None = "none",
+    Some = "some",
+    Lots = "lots",
 }
