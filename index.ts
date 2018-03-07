@@ -90,9 +90,9 @@ function handleMessage(senderID: PSID, message: any) {
             type: MessagingType.Response,
             recipient: senderID,
             body: {
-                text: "Hello, welcome to Coding For All!" +
-                "Whether you're a beginner or a professional programmer," +
-                "want to go through a whole MOOC or read a 5 minute article," +
+                text: "Hello, welcome to Coding For All! " +
+                "Whether you're a beginner or a professional programmer, " +
+                "want to go through a whole MOOC or read a 5 minute article, " +
                 "we have something for you. First, we'd like to know little bit about you.",
             },
         });
