@@ -37,7 +37,7 @@ db.serialize(function () {
     db.run("CREATE TABLE articles (" +
         "interest TEXT," +
         "url TEXT," +
-        "length TEXT,)");
+        "length TEXT)");
 });
 
 db.close();
