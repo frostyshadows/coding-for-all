@@ -23,6 +23,7 @@ if (isNullOrUndefined(pageAccessToken)) {
 
 // set up sqlite
 // TODO: use file for persistent db
+sqlite3.verbose();
 const db = new sqlite3.Database(":memory:");
 
 db.serialize(function () {
