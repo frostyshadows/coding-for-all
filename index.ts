@@ -187,7 +187,10 @@ function handlePostback(senderID: PSID, postback: any) {
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     // save sender and their experience level to users table
-    db.run(`INSERT INTO users (${senderID}, ${expLevel})`);
+    db.run("INSERT INTO users (" +
+        senderID + ", " +
+        expLevel + ")");
+    // db.run(`INSERT INTO users (${senderID}, ${expLevel})`);
 
     // ask about area of interest
     const interestBody = {
