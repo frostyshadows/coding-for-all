@@ -20,6 +20,28 @@ if (isNullOrUndefined(pageAccessToken)) {
     process.exit(1);
 }
 
+// set up sqlite
+var sqlite3 = require('sqlite3').verbose()
+// TODO: use file for persistent db
+var db = new sqlite3.Database(':memory:')
+
+db.serialize(function () {
+    db.run('CREATE TABLE users (' +
+        'senderId TEXT,' +
+        'expLevel TEXT,' +
+        'interests TEXT,' +
+        'updateFrequency TEXT)')
+})
+
+db.serialize(function () {
+    db.run('CREATE TABLE articles (' +
+        'interest TEXT,' +
+        'url TEXT,' +
+        'length TEXT,)')
+})
+
+db.close()
+
 // Set server port
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
 
@@ -152,15 +174,62 @@ function handlePostback(senderID: PSID, postback: any) {
             body: {text: "Sorry, something went wrong!"},
         });
     } else {
-       switch (type) {
-           case "exp":
-               handleExpPostback(senderID, value);
-               break;
-       }
+        switch (type) {
+            case "exp":
+                handleExpPostback(senderID, value);
+                break;
+            case "interest":
+                handleInterestPostback(senderId, value);
+        }
     }
 }
 
 function handleExpPostback(senderID: PSID, expLevel: string) {
+    // save sender and their experience level to users table
+    db.run(`INSERT INTO users (${senderID}, ${expLevel})`)
+
+    // ask about area of interest
+    const interestBody = {
+        attachment: {
+            type: "template",
+            payload: {
+                template_type: "generic",
+                elements: [{
+                    title: "Android",
+                    buttons: [
+                        {
+                            type: "postback",
+                            title: "Select",
+                            payload: "interest_android",
+                        },
+                    ],
+                },
+                    {
+                        title: "iOS",
+                        buttons: [
+                            {
+                                type: "postback",
+                                title: "Select",
+                                payload: "interest_iOS",
+                            }
+                        ]
+                    },
+                ]
+            },
+        },
+    };
+
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: interestBody,
+    })
+}
+
+function handleInterestPostback(senderID: PSID, interestType: string) {
+
+    // update users table with interest
+    db.run(`UPDATE users SET expLevel = ${expLevel} WHERE senderID = ${senderID}`)
     // TODO
 }
 
@@ -208,4 +277,10 @@ enum ExpLevel {
     None = "none",
     Some = "some",
     Lots = "lots",
+}
+
+enum UpdateFrequency {
+    FewTimesADay = "a few times a day",
+    Daily = "daily",
+    Weekly = "weekly"
 }
