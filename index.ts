@@ -185,6 +185,7 @@ function handlePostback(senderID: PSID, postback: any) {
 }
 
 function handleExpPostback(senderID: PSID, expLevel: string) {
+    trace("handleExpPostback");
     // save sender and their experience level to users table
     db.run(`INSERT INTO users (${senderID}, ${expLevel})`);
 
@@ -227,7 +228,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
 }
 
 function handleInterestPostback(senderID: PSID, interestType: string) {
-
+    trace("handleInterestPostback");
     // update users table with interest
     db.run(`UPDATE users SET expLevel = ${ExpLevel} WHERE senderID = ${senderID}`);
     // TODO
