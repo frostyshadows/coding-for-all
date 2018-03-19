@@ -40,7 +40,7 @@ db.serialize(function () {
         "length TEXT)");
 });
 
-db.close();
+// db.close();
 
 // Set server port
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
