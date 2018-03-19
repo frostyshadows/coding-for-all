@@ -4,6 +4,7 @@ import * as debug from "debug";
 import * as express from "express";
 import * as helmet from "helmet";
 import * as request from "request";
+import * as sqlite3 from "sqlite3";
 import {isNull, isNullOrUndefined} from "util";
 
 // Create Express HTTP server
@@ -21,26 +22,25 @@ if (isNullOrUndefined(pageAccessToken)) {
 }
 
 // set up sqlite
-var sqlite3 = require('sqlite3').verbose()
 // TODO: use file for persistent db
-var db = new sqlite3.Database(':memory:')
+const db = new sqlite3.Database(":memory:");
 
 db.serialize(function () {
-    db.run('CREATE TABLE users (' +
-        'senderId TEXT,' +
-        'expLevel TEXT,' +
-        'interests TEXT,' +
-        'updateFrequency TEXT)')
-})
+    db.run("CREATE TABLE users (" +
+        "senderID TEXT," +
+        "ExpLevel TEXT," +
+        "Interests TEXT," +
+        "UpdateFrequency TEXT)");
+});
 
 db.serialize(function () {
-    db.run('CREATE TABLE articles (' +
-        'interest TEXT,' +
-        'url TEXT,' +
-        'length TEXT,)')
-})
+    db.run("CREATE TABLE articles (" +
+        "interest TEXT," +
+        "url TEXT," +
+        "length TEXT,)");
+});
 
-db.close()
+db.close();
 
 // Set server port
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
@@ -179,14 +179,14 @@ function handlePostback(senderID: PSID, postback: any) {
                 handleExpPostback(senderID, value);
                 break;
             case "interest":
-                handleInterestPostback(senderId, value);
+                handleInterestPostback(senderID, value);
         }
     }
 }
 
 function handleExpPostback(senderID: PSID, expLevel: string) {
     // save sender and their experience level to users table
-    db.run(`INSERT INTO users (${senderID}, ${expLevel})`)
+    db.run(`INSERT INTO users (${senderID}, ${expLevel})`);
 
     // ask about area of interest
     const interestBody = {
@@ -211,10 +211,10 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
                                 type: "postback",
                                 title: "Select",
                                 payload: "interest_iOS",
-                            }
-                        ]
+                            },
+                        ],
                     },
-                ]
+                ],
             },
         },
     };
@@ -223,13 +223,13 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
         type: MessagingType.Response,
         recipient: senderID,
         body: interestBody,
-    })
+    });
 }
 
 function handleInterestPostback(senderID: PSID, interestType: string) {
 
     // update users table with interest
-    db.run(`UPDATE users SET expLevel = ${expLevel} WHERE senderID = ${senderID}`)
+    db.run(`UPDATE users SET expLevel = ${ExpLevel} WHERE senderID = ${senderID}`);
     // TODO
 }
 
@@ -282,5 +282,5 @@ enum ExpLevel {
 enum UpdateFrequency {
     FewTimesADay = "a few times a day",
     Daily = "daily",
-    Weekly = "weekly"
+    Weekly = "weekly",
 }
