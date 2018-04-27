@@ -275,6 +275,13 @@ enum MessagingType {
     MessageTag = "MESSAGE_TAG",
 }
 
+interface IOptions {
+    level: ExpLevel;
+    freq: UpdateFrequency;
+    interest: Interest;
+    type: ArticleType;
+}
+
 enum ExpLevel {
     None = "none",
     Some = "some",
@@ -285,4 +292,15 @@ enum UpdateFrequency {
     FewTimesADay = "a few times a day",
     Daily = "daily",
     Weekly = "weekly",
+}
+
+enum Interest {
+    Android = "android",
+    iOS = "ios",
+}
+
+enum ArticleType {
+    Tutorials = "tut",
+    Articles = "art",
+    Videos = "vid",
 }
