@@ -143,7 +143,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
         case "article": {
             // options should be the user's level and interest, and the article type that they requested
             const options: IOptions = {
-                expLevel,
+                level: expLevel,
                 interest,
                 type: ArticleType.Articles,
             };
