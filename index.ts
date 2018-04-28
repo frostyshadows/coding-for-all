@@ -135,10 +135,13 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interests: Inte
     switch (message.text.toLowerCase()) {
         case "tutorial":
             // TODO: send tutorial
+            break;
         case "article":
             // TODO: send article
+            break;
         case "video":
             // TODO: send video
+            break;
         default:
             helpMessage(senderID);
     }
