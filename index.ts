@@ -111,6 +111,7 @@ function handleMessage(senderID: PSID, message: any) {
         db.serialize(function () {
             // check if user is already in db
             db.get("SELECT * FROM users WHERE senderID = " + senderID, function (err, row) {
+                log("result of SELECT in handleMessage: " + JSON.stringify(row));
                 if (row !== undefined) {
                     // if senderID already exists in database
                     existingUserMessage(senderID, row.ExpLevel, row.Interests, message);
