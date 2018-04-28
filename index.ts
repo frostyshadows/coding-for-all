@@ -164,8 +164,8 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
                         body: articleLinkBody,
                     });
                 }
-                break;
             }
+            break;
         }
         case "video":
             // TODO: send video
