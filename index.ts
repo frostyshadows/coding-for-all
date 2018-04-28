@@ -163,6 +163,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
                         recipient: senderID,
                         body: articleLinkBody,
                     });
+                    break;
                 }
             }
             break;
