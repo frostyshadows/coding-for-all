@@ -143,8 +143,8 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
         case "article": {
             // options should be the user's level and interest, and the article type that they requested
             const options: IOptions = {
-                level: expLevel,
-                interest: interest,
+                expLevel,
+                interest,
                 type: ArticleType.Articles,
             };
             log("user's options: " + JSON.stringify(options));
@@ -152,7 +152,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
                 if (link.options === options) {
                     // TODO: pick random link rather than send first one that fits criteria
                     const articleLinkBody = {
-                        type:"web_url",
+                        type: "web_url",
                         url: link.link,
                         title: link.title,
                         messenger_extensions: "false",
