@@ -145,7 +145,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
             const options: IOptions = {
                 "level": expLevel,
                 "interest": interest,
-                "type": "art"
+                "type": ArticleType.Articles
             };
             log("user's options: " + JSON.stringify(options));
             for (let link of links) {
