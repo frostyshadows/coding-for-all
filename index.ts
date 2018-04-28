@@ -108,10 +108,10 @@ app.get("/webhook", (req, res) => {
 function handleMessage(senderID: PSID, message: any) {
     trace("handleMessage");
     if (message.text) {
-        db.serialize(function() {
+        db.serialize(function () {
             // check if user is already in db
-            db.get("SELECT * FROM users WHERE senderID = " + senderID, function(err, row) {
-                if (row != undefined) {
+            db.get("SELECT * FROM users WHERE senderID = " + senderID, function (err, row) {
+                if (row !== undefined) {
                     // if senderID already exists in database
                     existingUserMessage(senderID, row.ExpLevel, row.Interests, message);
 
@@ -144,7 +144,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interests: Inte
     }
 }
 
-function newUserMessage(senderID: PSID, message:any) {
+function newUserMessage(senderID: PSID, message: any) {
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -278,7 +278,8 @@ function helpMessage(senderID: PSID) {
         body: {
             text: "Please type 'tutorial' for a tutorial recommendation, " +
             "'article' for an article recommentation, " +
-            "or 'video' if you would like a video. If you would like to change your experience level, please type 'experience'." +
+            "or 'video' if you would like a video. " +
+            "If you would like to change your experience level, please type 'experience'." +
             "To change your area of interest, type 'interest'.",
         },
     });
