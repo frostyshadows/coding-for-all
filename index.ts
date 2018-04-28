@@ -5,6 +5,7 @@ import * as express from "express";
 import * as helmet from "helmet";
 import * as request from "request";
 import * as sqlite3 from "sqlite3";
+import * as fs from 'fs';
 import {isNull, isNullOrUndefined} from "util";
 
 // Create Express HTTP server
@@ -25,6 +26,8 @@ if (isNullOrUndefined(pageAccessToken)) {
 // TODO: use file for persistent db
 sqlite3.verbose();
 const db = new sqlite3.Database(":memory:");
+
+const links: ILink[] = JSON.parse(fs.readFileSync('links.json').toString());
 
 db.serialize(function () {
     db.run("CREATE TABLE users (" +
@@ -132,14 +135,38 @@ function handleMessage(senderID: PSID, message: any) {
     }
 }
 
-function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interests: Interest, message: any) {
+function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Interest, message: any) {
     switch (message.text.toLowerCase()) {
         case "tutorial":
             // TODO: send tutorial
             break;
-        case "article":
-            // TODO: send article
-            break;
+        case "article": {
+            // options should be the user's level and interest, and the article type that they requested
+            const options: IOptions = {
+                "level": expLevel,
+                "interest": interest,
+                "type": "art"
+            };
+            log("user's options: " + JSON.stringify(options));
+            for (let link of links) {
+                if (link.options === options) {
+                    // TODO: pick random link rather than send first one that fits criteria
+                    const articleLinkBody = {
+                        "type":"web_url",
+                        "url":link.link,
+                        "title":link.title,
+                        "messenger_extensions": "false",
+                    }
+                    log("sending article");
+                    send({
+                        type: MessagingType.Response,
+                        recipient: senderID,
+                        body: articleLinkBody,
+                    });
+                }
+                break;
+            }
+        }
         case "video":
             // TODO: send video
             break;
@@ -319,6 +346,12 @@ interface ISendMessage {
     recipient: PSID;
     // TODO make this type safe somehow
     body: any;
+}
+
+interface ILink {
+    link: String;
+    title: String;
+    options: IOptions
 }
 
 // Possible types for a message sent to send api
