@@ -30,8 +30,7 @@ db.serialize(function () {
     db.run("CREATE TABLE users (" +
         "senderID TEXT," +
         "ExpLevel TEXT," +
-        "Interests TEXT," +
-        "UpdateFrequency TEXT)");
+        "Interests TEXT)");
 });
 
 db.serialize(function () {
@@ -109,50 +108,20 @@ app.get("/webhook", (req, res) => {
 function handleMessage(senderID: PSID, message: any) {
     trace("handleMessage");
     if (message.text) {
-        send({
-            type: MessagingType.Response,
-            recipient: senderID,
-            body: {
-                text: "Hello, welcome to Coding For Everyone! " +
-                "Whether you're a beginner or a professional programmer, " +
-                "want to go through a whole MOOC or read a 5 minute article, " +
-                "we have something for you. First, we'd like to know little bit about you.",
-            },
+        db.serialize(function() {
+            // check if user is already in db
+            db.get("SELECT * FROM users WHERE senderID = " + senderID, function(err, row) {
+                if (row != undefined) {
+                    // if senderID already exists in database
+                    existingUserMessage(senderID, row.ExpLevel, row.Interests, message);
+
+                } else {
+                    // if senderID doesn't already exist in the database, welcome user to Coding For Everyone
+                    newUserMessage(senderID, message);
+                }
+            });
         });
-        const experienceBody = {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "generic",
-                    elements: [{
-                        title: "How much programming experience do you have?",
-                        subtitle: "Tap a button to answer.",
-                        buttons: [
-                            {
-                                type: "postback",
-                                title: "None",
-                                payload: "exp_none",
-                            },
-                            {
-                                type: "postback",
-                                title: "Some",
-                                payload: "exp_some",
-                            },
-                            {
-                                type: "postback",
-                                title: "Lots",
-                                payload: "exp_lots",
-                            },
-                        ],
-                    }],
-                },
-            },
-        };
-        send({
-            type: MessagingType.Response,
-            recipient: senderID,
-            body: experienceBody,
-        });
+
     } else {
         send({
             type: MessagingType.Response,
@@ -160,6 +129,66 @@ function handleMessage(senderID: PSID, message: any) {
             body: {text: "Sorry, we don't accept attachments!"},
         });
     }
+}
+
+function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interests: Interest, message: any) {
+    switch (message.text.toLowerCase()) {
+        case "tutorial":
+            // TODO: send tutorial
+        case "article":
+            // TODO: send article
+        case "video":
+            // TODO: send video
+        default:
+            helpMessage();
+    }
+}
+
+function newUserMessage(senderUD: PSID, message:any) {
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: {
+            text: "Hello, welcome to Coding For Everyone! " +
+            "Whether you're a beginner or a professional programmer, " +
+            "want to go through a whole MOOC or read a 5 minute article, " +
+            "we have something for you. First, we'd like to know little bit about you.",
+        },
+    });
+    const experienceBody = {
+        attachment: {
+            type: "template",
+            payload: {
+                template_type: "generic",
+                elements: [{
+                    title: "How much programming experience do you have?",
+                    subtitle: "Tap a button to answer.",
+                    buttons: [
+                        {
+                            type: "postback",
+                            title: "None",
+                            payload: "exp_none",
+                        },
+                        {
+                            type: "postback",
+                            title: "Some",
+                            payload: "exp_some",
+                        },
+                        {
+                            type: "postback",
+                            title: "Lots",
+                            payload: "exp_lots",
+                        },
+                    ],
+                }],
+            },
+        },
+    };
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: experienceBody,
+    });
 }
 
 // Handles postback events
@@ -188,7 +217,7 @@ function handlePostback(senderID: PSID, postback: any) {
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     // save sender and their experience level to users table
-    db.run("INSERT INTO users VALUES (?,?,?,?)", senderID, expLevel, "", "");
+    db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
 
     // ask about area of interest
     const interestBody = {
@@ -232,7 +261,27 @@ function handleInterestPostback(senderID: PSID, interestType: string) {
     trace("handleInterestPostback");
     // update users table with interest
     db.run("UPDATE users SET Interests = ? WHERE senderID = ?", interestType, senderID );
-    // TODO
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: {
+            text: "Great, you're all set!",
+        },
+    });
+    helpMessage();
+}
+
+function helpMessage() {
+    send({
+        type: MessagingType.Response,
+        recipient: senderID,
+        body: {
+            text: "Please type 'tutorial' for a tutorial recommendation, " +
+            "'article' for an article recommentation, " +
+            "or 'video' if you would like a video. If you would like to change your experience level, please type 'experience'." +
+            "To change your area of interest, type 'interest'.",
+        },
+    });
 }
 
 // Send a message via the send api
@@ -277,7 +326,6 @@ enum MessagingType {
 
 interface IOptions {
     level: ExpLevel;
-    freq: UpdateFrequency;
     interest: Interest;
     type: ArticleType;
 }
@@ -286,12 +334,6 @@ enum ExpLevel {
     None = "none",
     Some = "some",
     Lots = "lots",
-}
-
-enum UpdateFrequency {
-    FewTimesADay = "a few times a day",
-    Daily = "daily",
-    Weekly = "weekly",
 }
 
 enum Interest {
