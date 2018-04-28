@@ -140,7 +140,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interests: Inte
         case "video":
             // TODO: send video
         default:
-            helpMessage();
+            helpMessage(senderID);
     }
 }
 
@@ -268,10 +268,10 @@ function handleInterestPostback(senderID: PSID, interestType: string) {
             text: "Great, you're all set!",
         },
     });
-    helpMessage();
+    helpMessage(senderID);
 }
 
-function helpMessage() {
+function helpMessage(senderID: PSID) {
     send({
         type: MessagingType.Response,
         recipient: senderID,
