@@ -144,7 +144,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interests: Inte
     }
 }
 
-function newUserMessage(senderUD: PSID, message:any) {
+function newUserMessage(senderID: PSID, message:any) {
     send({
         type: MessagingType.Response,
         recipient: senderID,
