@@ -110,11 +110,11 @@ function handleMessage(senderID: PSID, message: any) {
                 log("result of SELECT in handleMessage: " + JSON.stringify(row));
                 if (row !== undefined) {
                     // if senderID already exists in database
-                    existingUserMessage(senderID, row.ExpLevel, row.Interests, message);
+                    sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
 
                 } else {
                     // if senderID doesn't already exist in the database, welcome user to Coding For Everyone
-                    newUserMessage(senderID, message);
+                    sendNewUserMessage(senderID, message);
                 }
             });
         });
@@ -128,50 +128,37 @@ function handleMessage(senderID: PSID, message: any) {
     }
 }
 
-function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Interest, message: any) {
-    trace("existingUserMessage");
-    switch (message.text.toLowerCase()) {
-        case "tutorial":
-            // TODO: send tutorial
-            break;
-        case "article": {
-            // options should be the user's level and interest, and the article type that they requested
-            const options: IOptions = {
-                level: expLevel,
-                interest,
-                type: ArticleType.Articles,
+function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Interest, message: any) {
+    trace("sendExistingUserMessage");
+    const options: IOptions = {
+        level: expLevel,
+        interest,
+        type: message.text.toLowerCase(),
+    };
+    log("User options: " + JSON.stringify(options));
+    for (const link of links) {
+        if (link.options === options) {
+            // TODO: pick random link rather than send first one that fits criteria
+            const articleLinkBody = {
+                type: "web_url",
+                url: link.link,
+                title: link.title,
+                messenger_extensions: "false",
             };
-            log("user's options: " + JSON.stringify(options));
-            for (const link of links) {
-                if (link.options === options) {
-                    // TODO: pick random link rather than send first one that fits criteria
-                    const articleLinkBody = {
-                        type: "web_url",
-                        url: link.link,
-                        title: link.title,
-                        messenger_extensions: "false",
-                    };
-                    log("sending article");
-                    send({
-                        type: MessagingType.Response,
-                        recipient: senderID,
-                        body: articleLinkBody,
-                    });
-                    break;
-                }
-            }
-            break;
+            log("sending article");
+            send({
+                type: MessagingType.Response,
+                recipient: senderID,
+                body: articleLinkBody,
+            });
+            return;
         }
-        case "video":
-            // TODO: send video
-            break;
-        default:
-            helpMessage(senderID);
     }
+    sendHelpMessage(senderID);
 }
 
-function newUserMessage(senderID: PSID, message: any) {
-    trace("newUserMessage");
+function sendNewUserMessage(senderID: PSID, message: any) {
+    trace("sendNewUserMessage");
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -218,7 +205,6 @@ function newUserMessage(senderID: PSID, message: any) {
     });
 }
 
-// Handles postback events
 function handlePostback(senderID: PSID, postback: any) {
     trace("handlePostback");
     const payload: string = postback.payload;
@@ -237,16 +223,14 @@ function handlePostback(senderID: PSID, postback: any) {
                 break;
             case "interest":
                 handleInterestPostback(senderID, value);
+                break;
         }
     }
 }
 
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
-    // save sender and their experience level to users table
     db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
-
-    // ask about area of interest
     const interestBody = {
         attachment: {
             type: "template",
@@ -276,7 +260,6 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
             },
         },
     };
-
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -286,8 +269,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
 
 function handleInterestPostback(senderID: PSID, interestType: string) {
     trace("handleInterestPostback");
-    // update users table with interest
-    db.run("UPDATE users SET Interests = ? WHERE senderID = ?", interestType, senderID );
+    db.run("UPDATE users SET Interests = ? WHERE senderID = ?", interestType, senderID);
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -295,11 +277,11 @@ function handleInterestPostback(senderID: PSID, interestType: string) {
             text: "Great, you're all set!",
         },
     });
-    helpMessage(senderID);
+    sendHelpMessage(senderID);
 }
 
-function helpMessage(senderID: PSID) {
-    trace("helpMessage");
+function sendHelpMessage(senderID: PSID) {
+    trace("sendHelpMessage");
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -307,7 +289,7 @@ function helpMessage(senderID: PSID) {
             text: "Please type 'tutorial' for a tutorial recommendation, " +
             "'article' for an article recommentation, " +
             "or 'video' if you would like a video. " +
-            "If you would like to change your experience level, please type 'experience'." +
+            "If you would like to change your experience level, please type 'experience'. " +
             "To change your area of interest, type 'interest'.",
         },
     });
@@ -377,7 +359,7 @@ enum Interest {
 }
 
 enum ArticleType {
-    Tutorials = "tut",
-    Articles = "art",
-    Videos = "vid",
+    Tutorials = "tutorial",
+    Articles = "article",
+    Videos = "video",
 }
