@@ -288,7 +288,7 @@ function sendHelpMessage(senderID: PSID) {
         recipient: senderID,
         body: {
             text: "Please type 'tutorial' for a tutorial recommendation, " +
-            "'article' for an article recommentation, " +
+            "'article' for an article recommendation, " +
             "or 'video' if you would like a video. " +
             "If you would like to change your experience level, please type 'experience'. " +
             "To change your area of interest, type 'interest'.",
