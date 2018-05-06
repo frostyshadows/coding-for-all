@@ -142,10 +142,12 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
             link.options.type === message.text.toLowerCase()) {
             // TODO: pick random link rather than send first one that fits criteria
             const articleLinkBody = {
-                type: "web_url",
-                url: link.link,
-                title: link.title,
-                messenger_extensions: "false",
+                attachment: {
+                    type: "web_url",
+                    url: link.link,
+                    title: link.title,
+                    messenger_extensions: "false",
+                },
             };
             send({
                 type: MessagingType.Response,
