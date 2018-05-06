@@ -137,7 +137,9 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     };
     log("User options: " + JSON.stringify(options));
     for (const link of links) {
-        if (link.options === options) {
+        if (link.options.interest === interest &&
+            link.options.level === expLevel &&
+            link.options.type === message.text.toLowerCase()) {
             // TODO: pick random link rather than send first one that fits criteria
             const articleLinkBody = {
                 type: "web_url",
@@ -145,7 +147,6 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
                 title: link.title,
                 messenger_extensions: "false",
             };
-            log("sending article");
             send({
                 type: MessagingType.Response,
                 recipient: senderID,
