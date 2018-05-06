@@ -36,13 +36,6 @@ db.serialize(function () {
         "Interests TEXT)");
 });
 
-db.serialize(function () {
-    db.run("CREATE TABLE articles (" +
-        "interest TEXT," +
-        "url TEXT," +
-        "length TEXT)");
-});
-
 // db.close();
 
 // Set server port
