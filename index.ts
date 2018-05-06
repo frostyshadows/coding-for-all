@@ -129,6 +129,7 @@ function handleMessage(senderID: PSID, message: any) {
 }
 
 function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Interest, message: any) {
+    trace("existingUserMessage");
     switch (message.text.toLowerCase()) {
         case "tutorial":
             // TODO: send tutorial
@@ -170,6 +171,7 @@ function existingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Inter
 }
 
 function newUserMessage(senderID: PSID, message: any) {
+    trace("newUserMessage");
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -297,6 +299,7 @@ function handleInterestPostback(senderID: PSID, interestType: string) {
 }
 
 function helpMessage(senderID: PSID) {
+    trace("helpMessage");
     send({
         type: MessagingType.Response,
         recipient: senderID,
