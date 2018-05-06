@@ -327,18 +327,18 @@ interface ISendMessage {
     body: any;
 }
 
-interface ILink {
-    link: string;
-    title: string;
-    options: IOptions;
-}
-
 // Possible types for a message sent to send api
 // See https://developers.facebook.com/docs/messenger-platform/send-messages/#messaging_types
 enum MessagingType {
     Response = "RESPONSE",
     Update = "UPDATE",
     MessageTag = "MESSAGE_TAG",
+}
+
+interface ILink {
+    link: string;
+    title: string;
+    options: IOptions;
 }
 
 interface IOptions {
