@@ -231,32 +231,45 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
     db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
     const interestBody = {
         attachment: {
-            type: "template",
-            payload: {
-                template_type: "generic",
-                elements: [{
+            text: "What field of Computer Science would you like to learn more about?",
+            quick_replies: [
+                {
+                    content_type: "text",
                     title: "Android",
-                    buttons: [
-                        {
-                            type: "postback",
-                            title: "Select",
-                            payload: "interest_android",
-                        },
-                    ],
+                    payload: "interest_android",
                 },
-                    {
-                        title: "iOS",
-                        buttons: [
-                            {
-                                type: "postback",
-                                title: "Select",
-                                payload: "interest_iOS",
-                            },
-                        ],
-                    },
-                ],
-            },
-        },
+                {
+                    content_type: "text",
+                    title: "iOS",
+                    payload: "interest_iOS",
+                }
+            ]
+        }
+        // payload: {
+        //     template_type: "generic",
+        //     elements: [{
+        //         title: "Android",
+        //         buttons: [
+        //             {
+        //                 type: "postback",
+        //                 title: "Select",
+        //                 payload: "interest_android",
+        //             },
+        //         ],
+        //     },
+        //         {
+        //             title: "iOS",
+        //             buttons: [
+        //                 {
+        //                     type: "postback",
+        //                     title: "Select",
+        //                     payload: "interest_iOS",
+        //                 },
+        //             ],
+        //         },
+        //     ],
+        // },
+        //},
     };
     send({
         type: MessagingType.Response,
