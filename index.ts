@@ -286,7 +286,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
                     content_type: "text",
                     title: "theory",
                     payload: "interest_theory",
-                }
+                },
             ],
     };
     send({
@@ -394,8 +394,6 @@ enum Interest {
     programming_languages = "programming_languages",
     networking = "networking",
     theory = "theory",
-
-
 }
 
 enum ArticleType {
