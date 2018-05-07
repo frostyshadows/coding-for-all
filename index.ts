@@ -242,9 +242,9 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
                     content_type: "text",
                     title: "iOS",
                     payload: "interest_iOS",
-                }
-            ]
-        }
+                },
+            ],
+        },
         // payload: {
         //     template_type: "generic",
         //     elements: [{
@@ -269,7 +269,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
         //         },
         //     ],
         // },
-        //},
+        // },
     };
     send({
         type: MessagingType.Response,
