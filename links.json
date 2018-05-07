@@ -14,7 +14,7 @@
     "options": {
       "level": "some",
       "interest": "android",
-      "type": "art"
+      "type": "article"
     }
   },
   {
@@ -23,7 +23,7 @@
     "options": {
       "level": "some",
       "interest": "web",
-      "type": "art"
+      "type": "article"
     }
   }
 ]
