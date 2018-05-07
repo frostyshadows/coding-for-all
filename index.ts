@@ -137,13 +137,13 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     trace("sendExistingUserMessage");
 
     // let user select a different experience level
-    if(message.text == "experience") {
+    if (message.text === "experience") {
         askExperience(senderID);
         return;
     }
 
     // let user select a different field of interest
-    if (message.text == "interest") {
+    if (message.text === "interest") {
         askInterest(senderID);
         return;
     }
