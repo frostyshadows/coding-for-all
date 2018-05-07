@@ -111,6 +111,7 @@ function handleMessage(senderID: PSID, message: any) {
                 log("result of SELECT in handleMessage: " + JSON.stringify(row));
                 if (row !== undefined) {
                     // if senderID already exists in database
+                    // check if it's a quick_reply containing the user's interest
                     if (message.quick_reply && message.quick_reply.payload.split("_")[0] === "interest") {
                         handleInterestMessage(senderID, message.quick_reply.payload.split("_")[1]);
                     } else {
@@ -222,10 +223,6 @@ function handlePostback(senderID: PSID, postback: any) {
         switch (type) {
             case "exp":
                 handleExpPostback(senderID, value);
-                break;
-            case "interest":
-                // TODO: probably remove this
-                handleInterestMessage(senderID, value);
                 break;
         }
     }
