@@ -104,6 +104,7 @@ app.get("/webhook", (req, res) => {
 function handleMessage(senderID: PSID, message: any) {
     trace("handleMessage");
     if (message.text) {
+        log("message text in handleMessage: " + message.text);
         db.serialize(function () {
             // check if user is already in db
             db.get("SELECT * FROM users WHERE senderID = " + senderID, function (err, row) {
@@ -111,7 +112,6 @@ function handleMessage(senderID: PSID, message: any) {
                 if (row !== undefined) {
                     // if senderID already exists in database
                     if (message.text.split("_")[0] === "interest") {
-                        log("message text in handleMessage: " + message.text);
                         handleInterestMessage(senderID, message.text.split("_")[1]);
                     } else {
                         sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
