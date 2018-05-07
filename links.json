@@ -7,5 +7,23 @@
       "interest": "android",
       "type": "article"
     }
+  },
+  {
+    "link": "https://medium.com/google-developers/picking-your-compilesdkversion-minsdkversion-targetsdkversion-a098a0341ebd",
+    "title": "Picking your compileSdkVersion, minSdkVersion, and targetSdkVersion",
+    "options": {
+      "level": "some",
+      "interest": "android",
+      "type": "art"
+    }
+  },
+  {
+    "link": "https://medium.com/ubc-launch-pad-software-engineering-blog/building-continuous-deployment-87a2bd8eedbe",
+    "title": "Inertia — Building a Simple, Self-Hosted Continuous Deployment Solution",
+    "options": {
+      "level": "some",
+      "interest": "web",
+      "type": "art"
+    }
   }
 ]

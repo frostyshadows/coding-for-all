@@ -354,6 +354,7 @@ enum ExpLevel {
 enum Interest {
     Android = "android",
     iOS = "ios",
+    web = "web",
 }
 
 enum ArticleType {
