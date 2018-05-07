@@ -111,6 +111,7 @@ function handleMessage(senderID: PSID, message: any) {
                 if (row !== undefined) {
                     // if senderID already exists in database
                     if (message.text.split("_")[0] === "interest") {
+                        log("message text in handleMessage: " + message.text);
                         handleInterestMessage(senderID, message.text.split("_")[1]);
                     } else {
                         sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
