@@ -191,7 +191,7 @@ function sendNewUserMessage(senderID: PSID, message: any) {
     askExperience(senderID);
 }
 // ask user what their experience level is
-function askExperience(senderID) {
+function askExperience(senderID: PSID) {
     const experienceBody = {
         attachment: {
             type: "template",
@@ -255,7 +255,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
 }
 
 // ask user what their field of interest in Computer Science is
-function askInterest(senderID) {
+function askInterest(senderID: PSID) {
     const interestBody = {
         text: "Which field of Computer Science would you like to learn more about?",
         quick_replies: [
