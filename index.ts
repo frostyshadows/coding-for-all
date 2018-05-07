@@ -240,34 +240,54 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
                 {
                     content_type: "text",
                     title: "iOS",
-                    payload: "interest_iOS",
+                    payload: "interest_ios",
                 },
+                {
+                    content_type: "text",
+                    title: "web dev",
+                    payload: "interest_web",
+                },
+                {
+                    content_type: "text",
+                    title: "AI/ML",
+                    payload: "interest_ai_ml",
+                },
+                {
+                    content_type: "text",
+                    title: "graphics",
+                    payload: "interest_graphics",
+                },
+                {
+                    content_type: "text",
+                    title: "security",
+                    payload: "interest_security",
+                },
+                {
+                    content_type: "text",
+                    title: "UI/UX/HCI",
+                    payload: "interest_ui_ux_hci",
+                },
+                {
+                    content_type: "text",
+                    title: "databases",
+                    payload: "interest_databases",
+                },
+                {
+                    content_type: "text",
+                    title: "programming languages",
+                    payload: "interest_programming_languages",
+                },
+                {
+                    content_type: "text",
+                    title: "networking",
+                    payload: "interest_networking",
+                },
+                {
+                    content_type: "text",
+                    title: "theory",
+                    payload: "interest_theory",
+                }
             ],
-        // payload: {
-        //     template_type: "generic",
-        //     elements: [{
-        //         title: "Android",
-        //         buttons: [
-        //             {
-        //                 type: "postback",
-        //                 title: "Select",
-        //                 payload: "interest_android",
-        //             },
-        //         ],
-        //     },
-        //         {
-        //             title: "iOS",
-        //             buttons: [
-        //                 {
-        //                     type: "postback",
-        //                     title: "Select",
-        //                     payload: "interest_iOS",
-        //                 },
-        //             ],
-        //         },
-        //     ],
-        // },
-        // },
     };
     send({
         type: MessagingType.Response,
@@ -366,6 +386,16 @@ enum Interest {
     Android = "android",
     iOS = "ios",
     web = "web",
+    ai_ml = "ai_ml",
+    graphics = "graphics",
+    security = "security",
+    ui_ux_hci = "ui_ux_hci",
+    databases = "databases",
+    programming_languages = "programming_languages",
+    networking = "networking",
+    theory = "theory",
+
+
 }
 
 enum ArticleType {
