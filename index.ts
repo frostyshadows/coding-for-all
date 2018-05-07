@@ -230,7 +230,6 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
     const interestBody = {
-        attachment: {
             text: "What field of Computer Science would you like to learn more about?",
             quick_replies: [
                 {
@@ -244,7 +243,6 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
                     payload: "interest_iOS",
                 },
             ],
-        },
         // payload: {
         //     template_type: "generic",
         //     elements: [{
