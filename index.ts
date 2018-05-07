@@ -110,8 +110,11 @@ function handleMessage(senderID: PSID, message: any) {
                 log("result of SELECT in handleMessage: " + JSON.stringify(row));
                 if (row !== undefined) {
                     // if senderID already exists in database
-                    sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
-
+                    if (message.text.split("_")[0] === "interest") {
+                        handleInterestMessage(senderID, message.text.split("_")[1]);
+                    } else {
+                        sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
+                    }
                 } else {
                     // if senderID doesn't already exist in the database, welcome user to Coding For Everyone
                     sendNewUserMessage(senderID, message);
@@ -220,7 +223,8 @@ function handlePostback(senderID: PSID, postback: any) {
                 handleExpPostback(senderID, value);
                 break;
             case "interest":
-                handleInterestPostback(senderID, value);
+                // TODO: probably remove this
+                handleInterestMessage(senderID, value);
                 break;
         }
     }
@@ -230,64 +234,64 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
     const interestBody = {
-            text: "What field of Computer Science would you like to learn more about?",
-            quick_replies: [
-                {
-                    content_type: "text",
-                    title: "Android",
-                    payload: "interest_android",
-                },
-                {
-                    content_type: "text",
-                    title: "iOS",
-                    payload: "interest_ios",
-                },
-                {
-                    content_type: "text",
-                    title: "web dev",
-                    payload: "interest_web",
-                },
-                {
-                    content_type: "text",
-                    title: "AI/ML",
-                    payload: "interest_ai_ml",
-                },
-                {
-                    content_type: "text",
-                    title: "graphics",
-                    payload: "interest_graphics",
-                },
-                {
-                    content_type: "text",
-                    title: "security",
-                    payload: "interest_security",
-                },
-                {
-                    content_type: "text",
-                    title: "UI/UX/HCI",
-                    payload: "interest_ui_ux_hci",
-                },
-                {
-                    content_type: "text",
-                    title: "databases",
-                    payload: "interest_databases",
-                },
-                {
-                    content_type: "text",
-                    title: "programming languages",
-                    payload: "interest_programming_languages",
-                },
-                {
-                    content_type: "text",
-                    title: "networking",
-                    payload: "interest_networking",
-                },
-                {
-                    content_type: "text",
-                    title: "theory",
-                    payload: "interest_theory",
-                },
-            ],
+        text: "Which field of Computer Science would you like to learn more about?",
+        quick_replies: [
+            {
+                content_type: "text",
+                title: "Android",
+                payload: "interest_android",
+            },
+            {
+                content_type: "text",
+                title: "iOS",
+                payload: "interest_ios",
+            },
+            {
+                content_type: "text",
+                title: "web dev",
+                payload: "interest_web",
+            },
+            {
+                content_type: "text",
+                title: "AI/ML",
+                payload: "interest_ai-ml",
+            },
+            {
+                content_type: "text",
+                title: "graphics",
+                payload: "interest_graphics",
+            },
+            {
+                content_type: "text",
+                title: "security",
+                payload: "interest_security",
+            },
+            {
+                content_type: "text",
+                title: "UI/UX/HCI",
+                payload: "interest_ui-ux-hci",
+            },
+            {
+                content_type: "text",
+                title: "databases",
+                payload: "interest_databases",
+            },
+            {
+                content_type: "text",
+                title: "programming languages",
+                payload: "interest_programming-languages",
+            },
+            {
+                content_type: "text",
+                title: "networking",
+                payload: "interest_networking",
+            },
+            {
+                content_type: "text",
+                title: "theory",
+                payload: "interest_theory",
+            },
+        ],
     };
     send({
         type: MessagingType.Response,
@@ -296,8 +300,8 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
     });
 }
 
-function handleInterestPostback(senderID: PSID, interestType: string) {
-    trace("handleInterestPostback");
+function handleInterestMessage(senderID: PSID, interestType: string) {
+    trace("handleInterestMessage");
     db.run("UPDATE users SET Interests = ? WHERE senderID = ?", interestType, senderID);
     send({
         type: MessagingType.Response,
@@ -386,12 +390,12 @@ enum Interest {
     Android = "android",
     iOS = "ios",
     web = "web",
-    ai_ml = "ai_ml",
+    ai_ml = "ai-ml",
     graphics = "graphics",
     security = "security",
-    ui_ux_hci = "ui_ux_hci",
+    ui_ux_hci = "ui-ux-hci",
     databases = "databases",
-    programming_languages = "programming_languages",
+    programming_languages = "programming-languages",
     networking = "networking",
     theory = "theory",
 }
