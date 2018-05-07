@@ -135,12 +135,26 @@ function handleMessage(senderID: PSID, message: any) {
 
 function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Interest, message: any) {
     trace("sendExistingUserMessage");
+
+    // let user select a different experience level
+    if(message.text == "experience") {
+        askExperience(senderID);
+        return;
+    }
+
+    // let user select a different field of interest
+    if (message.text == "interest") {
+        askInterest(senderID);
+        return;
+    }
+
     const options: IOptions = {
         level: expLevel,
         interest,
         type: message.text.toLowerCase(),
     };
     log("User options: " + JSON.stringify(options));
+    // find a link that matches their profile and requested article type
     for (const link of links) {
         if (link.options.interest === interest &&
             link.options.level === expLevel &&
@@ -160,6 +174,7 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     sendHelpMessage(senderID);
 }
 
+// explain what Coding For Everyone is, then ask user for their experience level
 function sendNewUserMessage(senderID: PSID, message: any) {
     trace("sendNewUserMessage");
     send({
@@ -172,6 +187,11 @@ function sendNewUserMessage(senderID: PSID, message: any) {
             "we have something for you. First, we'd like to know little bit about you.",
         },
     });
+    // TODO: might make more sense to ask field of interest first?
+    askExperience(senderID);
+}
+// ask user what their experience level is
+function askExperience(senderID) {
     const experienceBody = {
         attachment: {
             type: "template",
@@ -231,6 +251,11 @@ function handlePostback(senderID: PSID, postback: any) {
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
+    askInterest(senderID);
+}
+
+// ask user what their field of interest in Computer Science is
+function askInterest(senderID) {
     const interestBody = {
         text: "Which field of Computer Science would you like to learn more about?",
         quick_replies: [
