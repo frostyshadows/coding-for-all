@@ -7,6 +7,7 @@ import * as request from "request";
 import * as sqlite3 from "sqlite3";
 import * as fs from "fs";
 import {isNull, isNullOrUndefined} from "util";
+import {compareLinks} from "helpers";
 
 
 // Create Express HTTP server
