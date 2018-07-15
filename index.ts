@@ -159,35 +159,34 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     };
     log("User options: " + JSON.stringify(options));
     // find a link that matches their profile and requested article type
-    for (const link of links) {
-        if (link.options.interest === interest &&
-            link.options.level === expLevel &&
-            link.options.type === message.text.toLowerCase()) {
-            // TODO: pick random link rather than send first one that fits criteria
-            const articleLinkBody = {
-                text: link.link,
-            };
-            send({
-                type: MessagingType.Response,
-                recipient: senderID,
-                body: articleLinkBody,
-            });
-            return;
-        }
+
+    const link = generateRandomLink(interest, expLevel, type);
+    if (link.options.interest === interest &&
+        link.options.level === expLevel &&
+        link.options.type === message.text.toLowerCase()) {
+        const articleLinkBody = {
+            text: link.link,
+        };
+        send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: articleLinkBody,
+        });
+        return;
     }
     sendHelpMessage(senderID);
 }
 
-function generateRandomLink(interest: string, expLevel: string, type: string) {
+function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
     let max = 0;
     let min = links.length - 1;
 
     let randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
     let currentLink = links[randomIndex];
 
-    while (currentLink.options.interest !== interest ||
+    while (max >= min && (currentLink.options.interest !== interest ||
     currentLink.options.level !== expLevel ||
-    currentLink.options.type !== type) {
+    currentLink.options.type !== type)) {
         randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
         currentLink = links[randomIndex];
         if (currentLink.options.interest < interest) {
