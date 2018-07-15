@@ -160,7 +160,7 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     log("User options: " + JSON.stringify(options));
     // find a link that matches their profile and requested article type
 
-    const link = generateRandomLink(interest, expLevel, type);
+    const link = generateRandomLink(interest, expLevel, message.text.toLowerCase());
     if (link.options.interest === interest &&
         link.options.level === expLevel &&
         link.options.type === message.text.toLowerCase()) {
