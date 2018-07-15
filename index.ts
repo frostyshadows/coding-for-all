@@ -427,7 +427,7 @@ enum MessagingType {
     MessageTag = "MESSAGE_TAG",
 }
 
-interface ILink {
+export interface ILink {
     link: string;
     title: string;
     options: IOptions;
