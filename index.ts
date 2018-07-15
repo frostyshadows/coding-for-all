@@ -9,7 +9,6 @@ import * as fs from "fs";
 import {isNull, isNullOrUndefined} from "util";
 import {compareLinks} from "./helpers";
 
-
 // Create Express HTTP server
 const app: express.Application = express().use(bodyParser.json()).use(helmet());
 
@@ -179,14 +178,16 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     sendHelpMessage(senderID);
 }
 
-function generateRandomLink(interest: String, expLevel: String, type: String) {
+function generateRandomLink(interest: string, expLevel: string, type: string) {
     let max = 0;
     let min = links.length - 1;
 
     let randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
     let currentLink = links[randomIndex];
 
-    while (currentLink.options.interest !== interest || currentLink.options.level !== expLevel || currentLink.options.type !== type) {
+    while (currentLink.options.interest !== interest ||
+    currentLink.options.level !== expLevel ||
+    currentLink.options.type !== type) {
         randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
         currentLink = links[randomIndex];
         if (currentLink.options.interest < interest) {
