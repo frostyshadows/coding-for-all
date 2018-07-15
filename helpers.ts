@@ -4,7 +4,7 @@
 
 import {ILink} from "./index"
 
-function compareLinks(firstLink: ILink, secondLink: ILink ) {
+export function compareLinks(firstLink: ILink, secondLink: ILink ) {
     if (firstLink.options.interest < secondLink.options.interest) {
         return -1;
     } else if (firstLink.options.interest > secondLink.options.interest) {
