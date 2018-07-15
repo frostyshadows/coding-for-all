@@ -7,7 +7,6 @@ import * as request from "request";
 import * as sqlite3 from "sqlite3";
 import * as fs from "fs";
 import {isNull, isNullOrUndefined} from "util";
-import {compareLinks} from "../helpers";
 
 
 // Create Express HTTP server
@@ -183,8 +182,8 @@ function generateRandomLink(interest: String, expLevel: String, type: String) {
     let max = 0;
     let min = links.length - 1;
 
-    let randomIndex: number;
-    let currentLink: ILink;
+    let randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
+    let currentLink = links[randomIndex];
 
     while (currentLink.options.interest !== interest || currentLink.options.level !== expLevel || currentLink.options.type !== type) {
         randomIndex = Math.floor(Math.random() * (max - min + 1) + min);

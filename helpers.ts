@@ -2,8 +2,6 @@
  * Created by sherryuan on 2018-07-14.
  */
 
-import {ILink} from "../index"
-
 function compareLinks(firstLink: ILink, secondLink: ILink ) {
     if (firstLink.options.interest < secondLink.options.interest) {
         return -1;
