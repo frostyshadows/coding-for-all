@@ -7,6 +7,8 @@ import * as request from "request";
 import * as sqlite3 from "sqlite3";
 import * as fs from "fs";
 import {isNull, isNullOrUndefined} from "util";
+import {compareLinks} from "../helpers";
+
 
 // Create Express HTTP server
 const app: express.Application = express().use(bodyParser.json()).use(helmet());
@@ -28,6 +30,9 @@ sqlite3.verbose();
 const db = new sqlite3.Database(":memory:");
 
 const links: ILink[] = JSON.parse(fs.readFileSync("links.json").toString());
+// sort links
+// organized by interest, then level, then type
+links.sort(compareLinks);
 
 db.serialize(function () {
     db.run("CREATE TABLE users (" +
@@ -172,6 +177,38 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
         }
     }
     sendHelpMessage(senderID);
+}
+
+function generateRandomLink(interest: String, expLevel: String, type: String) {
+    let max = 0;
+    let min = links.length - 1;
+
+    let randomIndex: number;
+    let currentLink: ILink;
+
+    while (currentLink.options.interest !== interest || currentLink.options.level !== expLevel || currentLink.options.type !== type) {
+        randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
+        currentLink = links[randomIndex];
+        if (currentLink.options.interest < interest) {
+            min = randomIndex + 1;
+        } else if (currentLink.options.interest > interest) {
+            max = randomIndex - 1;
+        } else {
+            if (currentLink.options.level < expLevel) {
+                min = randomIndex + 1;
+            } else if (currentLink.options.level < expLevel) {
+                max = randomIndex - 1;
+            } else {
+                if (currentLink.options.type < type) {
+                    min = randomIndex + 1;
+                } else {
+                    max = randomIndex - 1;
+                }
+            }
+        }
+    }
+    return currentLink;
+
 }
 
 // explain what Coding For Everyone is, then ask user for their experience level
