@@ -25,5 +25,41 @@
       "interest": "web",
       "type": "article"
     }
+  },
+  {
+    "link": "https://medium.com/exploring-code/exploring-jetpack-scheduling-tasks-with-work-manager-fba20d7c69bf",
+    "title": "Exploring Jetpack: Scheduling tasks with Work Manager",
+    "options": {
+      "level": "some",
+      "interest": "android",
+      "type": "article"
+    }
+  },
+  {
+    "link": "https://codelabs.developers.google.com/codelabs/android-persistence/index.html?index=..%2F..%2Findex#0",
+    "title": "Android Persistence codelab",
+    "options": {
+      "level": "some",
+      "interest": "android",
+      "type": "tutorial"
+    }
+  },
+  {
+    "link": "https://codelabs.developers.google.com/codelabs/face-detection/index.html?index=..%2F..%2Findex#0",
+    "title": "Face Detection with the Mobile Vision API",
+    "options": {
+      "level": "some",
+      "interest": "android",
+      "type": "tutorial"
+    }
+  },
+  {
+    "link": "https://codelabs.developers.google.com/codelabs/notification-channels-kotlin/index.html?index=..%2F..%2Findex#0",
+    "title": "Notification Channels and Badges (Kotlin)",
+    "options": {
+      "level": "some",
+      "interest": "android",
+      "type": "tutorial"
+    }
   }
 ]
