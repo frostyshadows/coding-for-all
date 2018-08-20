@@ -187,8 +187,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
     });
 
     if (start === -1) {
-        trace("no article found");
-        return null;
+        throw new Error("no article found");
     }
 
     let end: Number = start + 1;
