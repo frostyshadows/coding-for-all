@@ -161,7 +161,7 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     // find a link that matches their profile and requested article type
 
     const link = generateRandomLink(interest, expLevel, message.text.toLowerCase());
-    if (link.options.interest === interest &&
+    if (link !== null && link.options.interest === interest &&
         link.options.level === expLevel &&
         link.options.type === message.text.toLowerCase()) {
         const articleLinkBody = {
@@ -180,7 +180,7 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
 
 export function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
     trace("generateRandomLink");
-    let start: Number = links.findIndex(function(currentLink) {
+    let start: number = links.findIndex(function(currentLink) {
         return (currentLink.options.interest === interest) &&
             (currentLink.options.level === expLevel) &&
             (currentLink.options.type === type);
@@ -188,7 +188,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
 
     if (start === -1) {
         trace("no article found");
-        return;
+        return null;
     }
 
     let end: Number = start + 1;
