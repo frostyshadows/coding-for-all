@@ -223,6 +223,7 @@ function sendNewUserMessage(senderID: PSID, message: any) {
             "we have something for you. First, we'd like to know little bit about you.",
         },
     });
+    db.run("INSERT INTO users VALUES (?,?,?)", senderID, "", "");
     // TODO: might make more sense to ask field of interest first?
     askExperience(senderID);
 }
