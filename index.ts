@@ -201,7 +201,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
         }
     }
 
-    let randomIndex = Math.floor(Math.random() * (end - start + 1) + start);
+    let randomIndex = Math.floor(Math.random() * (end - start) + start);
 
     return links[randomIndex];
 }
