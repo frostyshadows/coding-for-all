@@ -190,7 +190,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
         throw new Error("no article found");
     }
 
-    let end: Number = start + 1;
+    let end: number = start + 1;
     for (let i = start; i < links.length; i++) {
         if ((links[i].options.interest !== interest) ||
             (links[i].options.level !== expLevel) ||
