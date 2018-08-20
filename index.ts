@@ -32,7 +32,7 @@ const links: ILink[] = JSON.parse(fs.readFileSync("links.json").toString());
 // sort links
 // organized by interest, then level, then type
 links.sort(compareLinks);
-trace(links.toString());
+trace(JSON.stringify(links));
 
 db.serialize(function () {
     db.run("CREATE TABLE users (" +
