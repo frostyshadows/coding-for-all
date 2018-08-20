@@ -28,6 +28,9 @@ if (isNullOrUndefined(pageAccessToken)) {
 sqlite3.verbose();
 const db = new sqlite3.Database(":memory:");
 
+// flag for interest
+let askedInterest = false;
+
 const links: ILink[] = JSON.parse(fs.readFileSync("links.json").toString());
 // sort links
 // organized by interest, then level, then type
@@ -285,13 +288,17 @@ function handlePostback(senderID: PSID, postback: any) {
 
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
-    db.run("INSERT INTO users VALUES (?,?,?)", senderID, expLevel, "");
-    askInterest(senderID);
+    trace("expLevel: " + expLevel);
+    db.run("UPDATE users SET ExpLevel = ? WHERE senderID = ?", expLevel, senderId);
+    if (!askedInterest) {
+        askInterest(senderID);
+    }
 }
 
 // ask user what their field of interest in Computer Science is
 function askInterest(senderID: PSID) {
     trace("askInterest");
+    askedInterest = true;
     const interestBody = {
         text: "Which field of Computer Science would you like to learn more about?",
         quick_replies: [
