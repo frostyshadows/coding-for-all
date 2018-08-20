@@ -289,7 +289,7 @@ function handlePostback(senderID: PSID, postback: any) {
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     trace("expLevel: " + expLevel);
-    db.run("UPDATE users SET ExpLevel = ? WHERE senderID = ?", expLevel, senderId);
+    db.run("UPDATE users SET ExpLevel = ? WHERE senderID = ?", expLevel, senderID);
     if (!askedInterest) {
         askInterest(senderID);
     }
