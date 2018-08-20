@@ -174,10 +174,12 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
         });
         return;
     }
+    log("No random link matching the given options found");
     sendHelpMessage(senderID);
 }
 
 export function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
+    trace("generateRandomLink");
     let start: Number = links.findIndex(function(currentLink) {
         return (currentLink.options.interest === interest) &&
             (currentLink.options.level === expLevel) &&
@@ -220,8 +222,10 @@ function sendNewUserMessage(senderID: PSID, message: any) {
     // TODO: might make more sense to ask field of interest first?
     askExperience(senderID);
 }
+
 // ask user what their experience level is
 function askExperience(senderID: PSID) {
+    trace("askExperience");
     const experienceBody = {
         attachment: {
             type: "template",
@@ -286,6 +290,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
 
 // ask user what their field of interest in Computer Science is
 function askInterest(senderID: PSID) {
+    trace("askInterest");
     const interestBody = {
         text: "Which field of Computer Science would you like to learn more about?",
         quick_replies: [
