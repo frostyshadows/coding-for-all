@@ -180,7 +180,7 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
 
 export function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
     trace("generateRandomLink");
-    let start: number = links.findIndex(function(currentLink) {
+    const start: number = links.findIndex(function (currentLink) {
         return (currentLink.options.interest === interest) &&
             (currentLink.options.level === expLevel) &&
             (currentLink.options.type === type);
@@ -200,7 +200,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
         }
     }
 
-    let randomIndex = Math.floor(Math.random() * (end - start) + start);
+    const randomIndex = Math.floor(Math.random() * (end - start) + start);
 
     return links[randomIndex];
 }
