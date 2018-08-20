@@ -177,38 +177,31 @@ function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: I
     sendHelpMessage(senderID);
 }
 
-function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
-    let max = 0;
-    let min = links.length - 1;
+export function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
+    let start: Number = links.findIndex(function(currentLink) {
+        return (currentLink.options.interest === interest) &&
+            (currentLink.options.level === expLevel) &&
+            (currentLink.options.type === type);
+    });
 
-    let randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
-    let currentLink = links[randomIndex];
+    if (start === -1) {
+        trace("no article found");
+        return;
+    }
 
-    while (max >= min && (currentLink.options.interest !== interest ||
-    currentLink.options.level !== expLevel ||
-    currentLink.options.type !== type)) {
-        randomIndex = Math.floor(Math.random() * (max - min + 1) + min);
-        currentLink = links[randomIndex];
-        if (currentLink.options.interest < interest) {
-            min = randomIndex + 1;
-        } else if (currentLink.options.interest > interest) {
-            max = randomIndex - 1;
-        } else {
-            if (currentLink.options.level < expLevel) {
-                min = randomIndex + 1;
-            } else if (currentLink.options.level < expLevel) {
-                max = randomIndex - 1;
-            } else {
-                if (currentLink.options.type < type) {
-                    min = randomIndex + 1;
-                } else {
-                    max = randomIndex - 1;
-                }
-            }
+    let end: Number = start + 1;
+    for (let i = start; i < links.length; i++) {
+        if ((links[i].options.interest !== interest) ||
+            (links[i].options.level !== expLevel) ||
+            (links[i].options.type !== type)) {
+            end = i;
+            break;
         }
     }
-    return currentLink;
 
+    let randomIndex = Math.floor(Math.random() * (end - start + 1) + start);
+
+    return links[randomIndex];
 }
 
 // explain what Coding For Everyone is, then ask user for their experience level

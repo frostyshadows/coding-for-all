@@ -61,5 +61,23 @@
       "interest": "android",
       "type": "tutorial"
     }
+  },
+  {
+    "link": "https://medium.freecodecamp.org/a-developers-guide-to-web-design-for-non-designers-1f64ce28c38d",
+    "title": "A developer’s guide to web design for non-designers",
+    "options": {
+      "level": "none",
+      "interest": "web",
+      "type": "article"
+    }
+  },
+  {
+    "link": "https://www.raywenderlich.com/4568-beginning-recyclerview",
+    "title": "Beginning RecyclerView",
+    "options": {
+      "level": "none",
+      "interest": "android",
+      "type": "tutorial"
+    }
   }
 ]
