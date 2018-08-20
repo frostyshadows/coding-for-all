@@ -32,6 +32,7 @@ const links: ILink[] = JSON.parse(fs.readFileSync("links.json").toString());
 // sort links
 // organized by interest, then level, then type
 links.sort(compareLinks);
+trace(links.toString());
 
 db.serialize(function () {
     db.run("CREATE TABLE users (" +
@@ -200,6 +201,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
         }
     }
 
+    trace("start index: " + start + ", end index: " + end);
     const randomIndex = Math.floor(Math.random() * (end - start) + start);
 
     return links[randomIndex];
