@@ -1,30 +1,22 @@
 ### Contributing
+If you'd like to add new articles, we would love to accept pull requests!
+To make this easier, we've provided a Python 3 script, link-to-json.py.
 
-If you'd like to add new articles,
-use the link-to-json.py Python 3 script to do so.
-In particular:
+First, fork [this repo](https://github.com/frostyshadows/coding-for-all) on Github.
+Then clone your fork to your local machine:
 ```bash
-git clone https://github.com/frostyshadows/coding-for-all.git
-cd coding-for-all/
-git checkout -b USERNAME-contrib
+git clone https://github.com/USERNAME/coding-for-all.git 
 ./link-to-json.py
 ```
-where `USERNAME` is your Github username.
+where USERNAME is your Github username.
+Follow the instructions given by link-to-json.py;
+this will add your new link(s) and push it to a new branch on your Github repo.
+Note that for the time being you cannot add new categories.
 
-The link-to-json.py script will ask you for the information it needs,
-then update the links database (links.json).
-After adding all the links:
+Then go back to your repo on Github
+and make a new pull request into the master branch of frostyshadows' repo.
 
-```bash
-git add links.json
-git commit -m "New links from USERNAME"
-git push --set-upstream origin USERNAME-contrib
-```
-
-Then go to [the repo on Github](https://github.com/frostyshadows/coding-for-all),
-go to branches, and make a new pull request for your branch!
-
-In the future more of this process might be automated.
+Thanks!
 
 ### Using the bot
 
