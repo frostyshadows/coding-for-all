@@ -12,22 +12,9 @@ branch_name = "{}-contrib".format(username)
 create_branch_cmd = ['git', 'checkout', '-b', branch_name]
 subprocess.check_output(create_branch_cmd)
 
-valid_levels = [
-    'none',
-    'some',
-    'lots'
-]
-valid_interests = [
-    'android',
-    'ios',
-    'web',
-    'graphics'
-]
-valid_types = [
-    'tutorial',
-    'article',
-    'video'
-]
+valid_levels = json.load(open('valid_levels.json', 'r'))
+valid_interests = json.load(open('valid_interests.json', 'r'))
+valid_types = json.load(open('valid_resource_types.json', 'r'))
 
 links_file = open("links.json", "r")
 links = json.load(links_file)
