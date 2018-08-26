@@ -3,14 +3,14 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as helmet from "helmet";
 import * as request from "request";
-import * as sqlite3 from "sqlite3";
 import * as fs from "fs";
+import {Database} from "./database";
 import {isNullOrUndefined} from "util";
 import {compareLinks} from "./helpers";
 import {log, trace} from "./logging";
 
-// Create Express HTTP server
 const app = express().use(bodyParser.json()).use(helmet());
+const db = new Database();
 
 // Get page access token from environment variable
 const pageAccessToken: string | undefined = process.env.PAGE_ACCESS_TOKEN;
@@ -18,11 +18,6 @@ if (isNullOrUndefined(pageAccessToken)) {
     log("Missing page access token in env vars");
     process.exit(1);
 }
-
-// set up sqlite
-// TODO: use file for persistent db
-sqlite3.verbose();
-const db = new sqlite3.Database(":memory:");
 
 // flag for interest
 let askedInterest = false;
@@ -32,15 +27,6 @@ const links: ILink[] = JSON.parse(fs.readFileSync("links.json").toString());
 // organized by interest, then level, then type
 links.sort(compareLinks);
 trace(JSON.stringify(links));
-
-db.serialize(function () {
-    db.run("CREATE TABLE users (" +
-        "senderID TEXT," +
-        "ExpLevel TEXT," +
-        "Interests TEXT)");
-});
-
-// db.close();
 
 // Set server port
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
@@ -109,23 +95,20 @@ function handleMessage(senderID: PSID, message: any) {
     trace("handleMessage");
     if (message.text) {
         log("message text in handleMessage: " + message.text);
-        db.serialize(function () {
-            // check if user is already in db
-            db.get("SELECT * FROM users WHERE senderID = " + senderID, function (err, row) {
-                log("result of SELECT in handleMessage: " + JSON.stringify(row));
-                if (row !== undefined) {
-                    // if senderID already exists in database
-                    // check if it's a quick_reply containing the user's interest
-                    if (message.quick_reply && message.quick_reply.payload.split("_")[0] === "interest") {
-                        handleInterestMessage(senderID, message.quick_reply.payload.split("_")[1]);
-                    } else {
-                        sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
-                    }
+        db.checkUserExists(senderID, (err: any, row: any) => {
+            log("result of SELECT in handleMessage: " + JSON.stringify(row));
+            if (row !== undefined) {
+                // if senderID already exists in database
+                // check if it's a quick_reply containing the user's interest
+                if (message.quick_reply && message.quick_reply.payload.split("_")[0] === "interest") {
+                    handleInterestMessage(senderID, message.quick_reply.payload.split("_")[1]);
                 } else {
-                    // if senderID doesn't already exist in the database, welcome user to Coding For Everyone
-                    sendNewUserMessage(senderID, message);
+                    sendExistingUserMessage(senderID, row.ExpLevel, row.Interests, message);
                 }
-            });
+            } else {
+                // if senderID doesn't already exist in the database, welcome user to Coding For Everyone
+                sendNewUserMessage(senderID, message);
+            }
         });
 
     } else {
@@ -214,13 +197,13 @@ function sendNewUserMessage(senderID: PSID, message: any) {
         recipient: senderID,
         body: {
             text: "Hello, welcome to Coding For Everyone! " +
-            "Whether you're a beginner or a professional programmer, " +
-            "want to go through a whole MOOC or read a 5 minute article, " +
-            "we have something for you. First, we'd like to know little bit about you.",
+                "Whether you're a beginner or a professional programmer, " +
+                "want to go through a whole MOOC or read a 5 minute article, " +
+                "we have something for you. First, we'd like to know little bit about you.",
         },
     });
-    db.run("INSERT INTO users VALUES (?,?,?)", senderID, "", "");
     // TODO: might make more sense to ask field of interest first?
+    db.insertNewEmptyUser(senderID);
     askExperience(senderID);
 }
 
@@ -286,7 +269,7 @@ function handlePostback(senderID: PSID, postback: any) {
 function handleExpPostback(senderID: PSID, expLevel: string) {
     trace("handleExpPostback");
     trace("expLevel: " + expLevel);
-    db.run("UPDATE users SET ExpLevel = ? WHERE senderID = ?", expLevel, senderID);
+    db.updateLevel(senderID, expLevel);
     if (!askedInterest) {
         askInterest(senderID);
     }
@@ -365,7 +348,7 @@ function askInterest(senderID: PSID) {
 
 function handleInterestMessage(senderID: PSID, interestType: string) {
     trace("handleInterestMessage");
-    db.run("UPDATE users SET Interests = ? WHERE senderID = ?", interestType, senderID);
+    db.updateInterest(senderID, interestType);
     send({
         type: MessagingType.Response,
         recipient: senderID,
@@ -383,10 +366,10 @@ function sendHelpMessage(senderID: PSID) {
         recipient: senderID,
         body: {
             text: "Please type 'tutorial' for a tutorial recommendation, " +
-            "'article' for an article recommendation, " +
-            "or 'video' if you would like a video. " +
-            "If you would like to change your experience level, please type 'experience'. " +
-            "To change your area of interest, type 'interest'.",
+                "'article' for an article recommendation, " +
+                "or 'video' if you would like a video. " +
+                "If you would like to change your experience level, please type 'experience'. " +
+                "To change your area of interest, type 'interest'.",
         },
     });
 }
