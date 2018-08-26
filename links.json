@@ -106,5 +106,14 @@
             "interest": "web",
             "type": "tutorial"
         }
+    },
+    {
+        "link": "https://www.scratchapixel.com",
+        "title": "Scratchapixel",
+        "options": {
+            "level": "none",
+            "interest": "graphics",
+            "type": "tutorial"
+        }
     }
 ]

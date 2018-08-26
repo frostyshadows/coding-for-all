@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 # small command line tool for formatting info about a link into JSON
 
+import subprocess
 import json
+
+username = ''
+while not username:
+    username = input("Enter a username for attribution:\n")
+
+branch_name = "{}-contrib".format(username)
+create_branch_cmd = ['git', 'checkout', '-b', branch_name]
+subprocess.check_output(create_branch_cmd)
 
 valid_levels = [
     'none',
@@ -11,7 +20,8 @@ valid_levels = [
 valid_interests = [
     'android',
     'ios',
-    'web'
+    'web',
+    'graphics'
 ]
 valid_types = [
     'tutorial',
@@ -25,8 +35,12 @@ links_file.close()
 
 done = False
 while not done:
-    link = input("Enter URL:\n")
-    title = input("Enter title:\n")
+    link = ''
+    while not link:
+        link = input("Enter URL:\n")
+    title = ''
+    while not title:
+        title = input("Enter title:\n")
     level = input("Enter level {}:\n".format(valid_levels))
     while not level in valid_levels:
         level = input("Please input a valid level {}\n".format(valid_levels))
@@ -55,3 +69,12 @@ while not done:
 
 links_file = open("links.json", "w")
 json.dump(links, links_file, indent=4, separators=(',', ': '))
+links_file.close()
+
+add_links_cmd = ['git', 'add', 'links.json']
+subprocess.check_output(add_links_cmd)
+commit_msg = "New links added by {}".format(username)
+commit_links_cmd = ['git', 'commit', '-m', commit_msg]
+subprocess.check_output(commit_links_cmd)
+push_commit_cmd = ['git', 'push', '--set-upstream', 'origin', branch_name]
+subprocess.check_output(push_commit_cmd)
