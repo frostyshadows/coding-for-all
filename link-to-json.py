@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
 # small command line tool for formatting info about a link into JSON
 
+import subprocess
 import json
 
-valid_levels = [
-    'none',
-    'some',
-    'lots'
-]
-valid_interests = [
-    'android',
-    'ios',
-    'web'
-]
-valid_types = [
-    'tutorial',
-    'article',
-    'video'
-]
+username = ''
+while not username:
+    username = input("Enter a username for attribution:\n")
+
+branch_name = "{}-contrib".format(username)
+create_branch_cmd = ['git', 'checkout', '-b', branch_name]
+subprocess.check_output(create_branch_cmd)
+
+valid_levels = json.load(open('valid_levels.json', 'r'))
+valid_interests = json.load(open('valid_interests.json', 'r'))
+valid_types = json.load(open('valid_resource_types.json', 'r'))
 
 links_file = open("links.json", "r")
 links = json.load(links_file)
@@ -25,8 +22,12 @@ links_file.close()
 
 done = False
 while not done:
-    link = input("Enter URL:\n")
-    title = input("Enter title:\n")
+    link = ''
+    while not link:
+        link = input("Enter URL:\n")
+    title = ''
+    while not title:
+        title = input("Enter title:\n")
     level = input("Enter level {}:\n".format(valid_levels))
     while not level in valid_levels:
         level = input("Please input a valid level {}\n".format(valid_levels))
@@ -55,3 +56,12 @@ while not done:
 
 links_file = open("links.json", "w")
 json.dump(links, links_file, indent=4, separators=(',', ': '))
+links_file.close()
+
+add_links_cmd = ['git', 'add', 'links.json']
+subprocess.check_output(add_links_cmd)
+commit_msg = "New links added by {}".format(username)
+commit_links_cmd = ['git', 'commit', '-m', commit_msg]
+subprocess.check_output(commit_links_cmd)
+push_commit_cmd = ['git', 'push', '--set-upstream', 'origin', branch_name]
+subprocess.check_output(push_commit_cmd)
