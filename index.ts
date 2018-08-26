@@ -1,20 +1,16 @@
 // Import dependencies
 import * as bodyParser from "body-parser";
-import * as debug from "debug";
 import * as express from "express";
 import * as helmet from "helmet";
 import * as request from "request";
 import * as sqlite3 from "sqlite3";
 import * as fs from "fs";
-import {isNull, isNullOrUndefined} from "util";
+import {isNullOrUndefined} from "util";
 import {compareLinks} from "./helpers";
+import {log, trace} from "./logging";
 
 // Create Express HTTP server
-const app: express.Application = express().use(bodyParser.json()).use(helmet());
-
-// Setup logging
-const log = debug("codingforall::debug");
-const trace = debug("codingforall::trace");
+const app = express().use(bodyParser.json()).use(helmet());
 
 // Get page access token from environment variable
 const pageAccessToken: string | undefined = process.env.PAGE_ACCESS_TOKEN;
