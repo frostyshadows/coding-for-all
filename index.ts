@@ -6,7 +6,7 @@ import * as request from "request";
 import * as fs from "fs";
 import {Database} from "./database";
 import {isNullOrUndefined} from "util";
-import {compareLinks} from "./helpers";
+import {compareLinks, ILink, IOptions, Level, Interest, ResourceType} from "./links";
 import {log, trace} from "./logging";
 
 const app = express().use(bodyParser.json()).use(helmet());
@@ -120,7 +120,7 @@ function handleMessage(senderID: PSID, message: any) {
     }
 }
 
-function sendExistingUserMessage(senderID: PSID, expLevel: ExpLevel, interest: Interest, message: any) {
+function sendExistingUserMessage(senderID: PSID, expLevel: Level, interest: Interest, message: any) {
     trace("sendExistingUserMessage");
 
     // let user select a different experience level
@@ -412,42 +412,4 @@ enum MessagingType {
     Response = "RESPONSE",
     Update = "UPDATE",
     MessageTag = "MESSAGE_TAG",
-}
-
-export interface ILink {
-    link: string;
-    title: string;
-    options: IOptions;
-}
-
-interface IOptions {
-    level: ExpLevel;
-    interest: Interest;
-    type: ArticleType;
-}
-
-enum ExpLevel {
-    None = "none",
-    Some = "some",
-    Lots = "lots",
-}
-
-enum Interest {
-    Android = "android",
-    iOS = "ios",
-    web = "web",
-    ai_ml = "ai-ml",
-    graphics = "graphics",
-    security = "security",
-    ui_ux_hci = "ui-ux-hci",
-    databases = "databases",
-    programming_languages = "programming-languages",
-    networking = "networking",
-    theory = "theory",
-}
-
-enum ArticleType {
-    Tutorials = "tutorial",
-    Articles = "article",
-    Videos = "video",
 }
