@@ -1,6 +1,6 @@
 // Encapsulates access to Facebook Messenger API
-import {trace, log} from "./logging";
 import * as request from "request";
+import {log, trace} from "./logging";
 
 // Message to be sent to send api
 // See https://developers.facebook.com/docs/messenger-platform/reference/send-api

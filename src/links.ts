@@ -1,6 +1,6 @@
 // Encapsulates access to the stored links
-import {trace} from "./logging";
 import * as fs from "fs";
+import {trace} from "./logging";
 
 export const links: ILink[] = JSON.parse(fs.readFileSync("data/links.json").toString());
 export const levels = JSON.parse(fs.readFileSync("data/valid_levels.json").toString());

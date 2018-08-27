@@ -4,7 +4,7 @@
   "description": "a messenger bot for teaching everyone to code",
   "main": "src/index.js",
   "scripts": {
-    "build": "tsc && tslint *.ts && echo 'Finished without error!' || echo 'Error!'",
+    "build": "tsc && tslint src/*.ts && echo 'Finished without error!' || echo 'Error!'",
     "start": "npm run build && node src/index.js"
   },
   "repository": {
