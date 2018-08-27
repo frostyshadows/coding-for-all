@@ -115,5 +115,23 @@
             "interest": "graphics",
             "type": "tutorial"
         }
+    },
+    {
+        "link": "https://learnopengl.com",
+        "title": "Learn OpenGL",
+        "options": {
+            "level": "none",
+            "interest": "graphics",
+            "type": "tutorial"
+        }
+    },
+    {
+        "link": "http://www.craftinginterpreters.com",
+        "title": "Crafting Interpreters",
+        "options": {
+            "level": "none",
+            "interest": "plt",
+            "type": "tutorial"
+        }
     }
 ]
