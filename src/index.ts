@@ -2,10 +2,9 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as helmet from "helmet";
-import * as fs from "fs";
 import {Database} from "./database";
 import {isNullOrUndefined} from "util";
-import {compareLinks, ILink, IOptions} from "./links";
+import {compareLinks, links, ILink, IOptions} from "./links";
 import {log, trace} from "./logging";
 import {Messenger} from "./messaging";
 
@@ -23,7 +22,6 @@ const messenger = new Messenger(pageAccessToken as string);
 // flag for interest
 let askedInterest = false;
 
-const links: ILink[] = JSON.parse(fs.readFileSync("data/links.json").toString());
 // sort links
 // organized by interest, then level, then type
 links.sort(compareLinks);
@@ -140,15 +138,14 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
     log("User options: " + JSON.stringify(options));
     // find a link that matches their profile and requested article type
 
-    const link = generateRandomLink(interest, level, message.text.toLowerCase());
-    if (link !== null && link.options.interest === interest &&
-        link.options.level === level &&
-        link.options.type === message.text.toLowerCase()) {
+    try {
+        const link = generateRandomLink(interest, level, message.text.toLowerCase());
         messenger.sendResource(senderID, link.link);
-        return;
+    } catch (e) {
+        log("No random link matching the given options found");
+        // TODO replace this with an contribution message
+        messenger.sendHelpMessage(senderID);
     }
-    log("No random link matching the given options found");
-    messenger.sendHelpMessage(senderID);
 }
 
 export function generateRandomLink(level: string, interest: string, type: string): ILink {

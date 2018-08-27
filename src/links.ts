@@ -2,6 +2,7 @@
 import {trace} from "./logging";
 import * as fs from "fs";
 
+export const links: ILink[] = JSON.parse(fs.readFileSync("data/links.json").toString());
 export const levels = JSON.parse(fs.readFileSync("data/valid_levels.json").toString());
 export const interests = JSON.parse(fs.readFileSync("data/valid_interests.json").toString());
 export const resourceTypes = JSON.parse(fs.readFileSync("data/valid_resource_types.json").toString());
