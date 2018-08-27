@@ -2,9 +2,9 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as helmet from "helmet";
-import {Database} from "./database";
 import {isNullOrUndefined} from "util";
-import {compareLinks, links, ILink, IOptions} from "./links";
+import {Database} from "./database";
+import {compareLinks, ILink, IOptions, links} from "./links";
 import {log, trace} from "./logging";
 import {Messenger} from "./messaging";
 
@@ -37,7 +37,7 @@ app.post("/webhook", (req, res) => {
     // Checks if this is an event from a page subscription
     if (body.object === "page") {
         // Iterates over each entry - there may be multiple if batched
-        body.entry.forEach(function (entry: any) {
+        body.entry.forEach((entry: any) => {
             // Gets the message. entry.messaging is an array, but
             // will only ever contain one message, so we get index 0
             const webhookEvent = entry.messaging[0];
@@ -150,7 +150,7 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
 
 export function generateRandomLink(level: string, interest: string, type: string): ILink {
     trace("generateRandomLink");
-    const start: number = links.findIndex(function (currentLink) {
+    const start: number = links.findIndex((currentLink) => {
         return (currentLink.options.interest === interest) &&
             (currentLink.options.level === level) &&
             (currentLink.options.type === type);

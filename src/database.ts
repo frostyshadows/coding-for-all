@@ -9,9 +9,8 @@ export class Database {
         sqlite3.verbose();
         this.db = new sqlite3.Database(":memory:");
 
-        const self = this;
-        self.db.serialize(function () {
-            self.db.run("CREATE TABLE users (" +
+        this.db.serialize(() => {
+            this.db.run("CREATE TABLE users (" +
                 "senderID TEXT," +
                 "ExpLevel TEXT," +
                 "Interests TEXT)");
@@ -25,9 +24,8 @@ export class Database {
 
     public checkUserExists(senderID: string, callback: any) {
         trace("checkUserExists");
-        const self = this;
-        self.db.serialize(() => {
-            self.db.get("SELECT * FROM users WHERE senderID = " + senderID, callback);
+        this.db.serialize(() => {
+            this.db.get("SELECT * FROM users WHERE senderID = " + senderID, callback);
         });
     }
 

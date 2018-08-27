@@ -1,14 +1,15 @@
 {
     "extends": [
-        "tslint:recommended"
+        "tslint:latest"
     ],
     "rules": {
         "no-implicit-dependencies": [
             true,
             "dev"
         ],
-        "no-string-literal": false,
-        "only-arrow-functions": false,
+        "no-shadowed-variable": true,
+        "no-string-literal": true,
+        "no-switch-case-fall-through": true,
         "space-before-function-paren": [
             true,
             {
@@ -18,7 +19,6 @@
             }
         ],
         "object-literal-sort-keys": false,
-        "forin": false,
-        "ordered-imports": false
+        "ordered-imports": true
     }
 }
