@@ -2,15 +2,12 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as helmet from "helmet";
-import * as request from "request";
 import * as fs from "fs";
 import {Database} from "./database";
 import {isNullOrUndefined} from "util";
 import {compareLinks, ILink, IOptions, Level, Interest, ResourceType} from "./links";
 import {log, trace} from "./logging";
-
-const app = express().use(bodyParser.json()).use(helmet());
-const db = new Database();
+import {Messenger, MessagingType} from "./messaging";
 
 // Get page access token from environment variable
 const pageAccessToken: string | undefined = process.env.PAGE_ACCESS_TOKEN;
@@ -18,6 +15,10 @@ if (isNullOrUndefined(pageAccessToken)) {
     log("Missing page access token in env vars");
     process.exit(1);
 }
+
+const app = express().use(bodyParser.json()).use(helmet());
+const db = new Database();
+const messenger = new Messenger(pageAccessToken as string);
 
 // flag for interest
 let askedInterest = false;
@@ -91,7 +92,7 @@ app.get("/webhook", (req, res) => {
 });
 
 // Handles message events
-function handleMessage(senderID: PSID, message: any) {
+function handleMessage(senderID: string, message: any) {
     trace("handleMessage");
     if (message.text) {
         log("message text in handleMessage: " + message.text);
@@ -112,7 +113,7 @@ function handleMessage(senderID: PSID, message: any) {
         });
 
     } else {
-        send({
+        messenger.send({
             type: MessagingType.Response,
             recipient: senderID,
             body: {text: "Sorry, we don't accept attachments!"},
@@ -120,7 +121,7 @@ function handleMessage(senderID: PSID, message: any) {
     }
 }
 
-function sendExistingUserMessage(senderID: PSID, expLevel: Level, interest: Interest, message: any) {
+function sendExistingUserMessage(senderID: string, expLevel: Level, interest: Interest, message: any) {
     trace("sendExistingUserMessage");
 
     // let user select a different experience level
@@ -150,7 +151,7 @@ function sendExistingUserMessage(senderID: PSID, expLevel: Level, interest: Inte
         const articleLinkBody = {
             text: link.link,
         };
-        send({
+        messenger.send({
             type: MessagingType.Response,
             recipient: senderID,
             body: articleLinkBody,
@@ -190,9 +191,9 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
 }
 
 // explain what Coding For Everyone is, then ask user for their experience level
-function sendNewUserMessage(senderID: PSID, message: any) {
+function sendNewUserMessage(senderID: string, message: any) {
     trace("sendNewUserMessage");
-    send({
+    messenger.send({
         type: MessagingType.Response,
         recipient: senderID,
         body: {
@@ -208,7 +209,7 @@ function sendNewUserMessage(senderID: PSID, message: any) {
 }
 
 // ask user what their experience level is
-function askExperience(senderID: PSID) {
+function askExperience(senderID: string) {
     trace("askExperience");
     const experienceBody = {
         attachment: {
@@ -239,20 +240,20 @@ function askExperience(senderID: PSID) {
             },
         },
     };
-    send({
+    messenger.send({
         type: MessagingType.Response,
         recipient: senderID,
         body: experienceBody,
     });
 }
 
-function handlePostback(senderID: PSID, postback: any) {
+function handlePostback(senderID: string, postback: any) {
     trace("handlePostback");
     const payload: string = postback.payload;
     const type: string = payload.split("_")[0];
     const value: string = payload.split("_")[1];
     if (isNullOrUndefined(type) || isNullOrUndefined(value)) {
-        send({
+        messenger.send({
             type: MessagingType.Response,
             recipient: senderID,
             body: {text: "Sorry, something went wrong!"},
@@ -266,7 +267,7 @@ function handlePostback(senderID: PSID, postback: any) {
     }
 }
 
-function handleExpPostback(senderID: PSID, expLevel: string) {
+function handleExpPostback(senderID: string, expLevel: string) {
     trace("handleExpPostback");
     trace("expLevel: " + expLevel);
     db.updateLevel(senderID, expLevel);
@@ -276,7 +277,7 @@ function handleExpPostback(senderID: PSID, expLevel: string) {
 }
 
 // ask user what their field of interest in Computer Science is
-function askInterest(senderID: PSID) {
+function askInterest(senderID: string) {
     trace("askInterest");
     askedInterest = true;
     const interestBody = {
@@ -339,17 +340,17 @@ function askInterest(senderID: PSID) {
             },
         ],
     };
-    send({
+    messenger.send({
         type: MessagingType.Response,
         recipient: senderID,
         body: interestBody,
     });
 }
 
-function handleInterestMessage(senderID: PSID, interestType: string) {
+function handleInterestMessage(senderID: string, interestType: string) {
     trace("handleInterestMessage");
     db.updateInterest(senderID, interestType);
-    send({
+    messenger.send({
         type: MessagingType.Response,
         recipient: senderID,
         body: {
@@ -359,9 +360,9 @@ function handleInterestMessage(senderID: PSID, interestType: string) {
     sendHelpMessage(senderID);
 }
 
-function sendHelpMessage(senderID: PSID) {
+function sendHelpMessage(senderID: string) {
     trace("sendHelpMessage");
-    send({
+    messenger.send({
         type: MessagingType.Response,
         recipient: senderID,
         body: {
@@ -372,44 +373,4 @@ function sendHelpMessage(senderID: PSID) {
                 "To change your area of interest, type 'interest'.",
         },
     });
-}
-
-// Send a message via the send api
-function send(message: ISendMessage) {
-    trace("send");
-    request({
-        uri: "https://graph.facebook.com/v2.6/me/messages",
-        qs: {access_token: pageAccessToken},
-        method: "POST",
-        json: {
-            messaging_type: message.type,
-            recipient: {id: message.recipient},
-            message: message.body,
-        },
-    }, (err, res, body) => {
-        if (err) {
-            log("Unable to send message: " + err);
-        } else {
-            log("Message sent successfully");
-        }
-    });
-}
-
-type PSID = string;
-
-// Message to be sent to send api
-// See https://developers.facebook.com/docs/messenger-platform/reference/send-api
-interface ISendMessage {
-    type: MessagingType;
-    recipient: PSID;
-    // TODO make this type safe somehow
-    body: any;
-}
-
-// Possible types for a message sent to send api
-// See https://developers.facebook.com/docs/messenger-platform/send-messages/#messaging_types
-enum MessagingType {
-    Response = "RESPONSE",
-    Update = "UPDATE",
-    MessageTag = "MESSAGE_TAG",
 }
