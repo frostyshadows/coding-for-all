@@ -139,7 +139,7 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
     // find a link that matches their profile and requested article type
 
     try {
-        const link = generateRandomLink(interest, level, message.text.toLowerCase());
+        const link = generateRandomLink(level, interest, message.text.toLowerCase());
         messenger.sendResource(senderID, link.link);
     } catch (e) {
         log("No random link matching the given options found");
