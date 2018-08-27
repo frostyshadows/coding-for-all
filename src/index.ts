@@ -23,7 +23,7 @@ const messenger = new Messenger(pageAccessToken as string);
 // flag for interest
 let askedInterest = false;
 
-const links: ILink[] = JSON.parse(fs.readFileSync("links.json").toString());
+const links: ILink[] = JSON.parse(fs.readFileSync("../data/links.json").toString());
 // sort links
 // organized by interest, then level, then type
 links.sort(compareLinks);

@@ -12,11 +12,11 @@ branch_name = "{}-contrib".format(username)
 create_branch_cmd = ['git', 'checkout', '-b', branch_name]
 subprocess.check_output(create_branch_cmd)
 
-valid_levels = json.load(open('valid_levels.json', 'r'))
-valid_interests = json.load(open('valid_interests.json', 'r'))
-valid_types = json.load(open('valid_resource_types.json', 'r'))
+valid_levels = json.load(open('data/valid_levels.json', 'r'))
+valid_interests = json.load(open('data/valid_interests.json', 'r'))
+valid_types = json.load(open('data/valid_resource_types.json', 'r'))
 
-links_file = open("links.json", "r")
+links_file = open("data/links.json", "r")
 links = json.load(links_file)
 links_file.close()
 
@@ -54,7 +54,7 @@ while not done:
     if done_str == 'y':
         done = True
 
-links_file = open("links.json", "w")
+links_file = open("data/links.json", "w")
 json.dump(links, links_file, indent=4, separators=(',', ': '))
 links_file.close()
 
