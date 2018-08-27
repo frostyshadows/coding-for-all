@@ -4,7 +4,7 @@ import * as express from "express";
 import * as helmet from "helmet";
 import {isNullOrUndefined} from "util";
 import {Database} from "./database";
-import {compareLinks, ILink, IOptions, links} from "./links";
+import {compareLinks, generateRandomLink, ILink, IOptions, links} from "./links";
 import {log, trace} from "./logging";
 import {Messenger} from "./messaging";
 
@@ -98,12 +98,9 @@ function handleMessage(senderID: string, message: any) {
 function sendExistingUserMessage(senderID: string, level: string, interest: string, message: any) {
     trace("sendExistingUserMessage");
 
-    // let user select a different experience level
     if (message.text === "experience") {
         return messenger.sendLevelRequest(senderID);
     }
-
-    // let user select a different field of interest
     if (message.text === "interest") {
         return askInterest(senderID);
     }
@@ -114,44 +111,14 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
         type: message.text.toLowerCase(),
     };
     log("User options: " + JSON.stringify(options));
-    // find a link that matches their profile and requested article type
 
     try {
-        const link = generateRandomLink(level, interest, message.text.toLowerCase());
+        const link = generateRandomLink(options);
         messenger.sendResource(senderID, link.link);
     } catch (e) {
         log("No random link matching the given options found");
-        // TODO replace this with an contribution message
-        messenger.sendHelpMessage(senderID);
+        messenger.sendNoResourceFoundMessage(senderID);
     }
-}
-
-export function generateRandomLink(level: string, interest: string, type: string): ILink {
-    trace("generateRandomLink");
-    const start: number = links.findIndex((currentLink) => {
-        return (currentLink.options.interest === interest) &&
-            (currentLink.options.level === level) &&
-            (currentLink.options.type === type);
-    });
-
-    if (start === -1) {
-        throw new Error("No article found");
-    }
-
-    let end: number = start + 1;
-    for (let i = start; i < links.length; i++) {
-        if ((links[i].options.interest !== interest) ||
-            (links[i].options.level !== level) ||
-            (links[i].options.type !== type)) {
-            end = i;
-            break;
-        }
-    }
-
-    log("start index: " + start + ", end index: " + end);
-    const randomIndex = Math.floor(Math.random() * (end - start) + start);
-
-    return links[randomIndex];
 }
 
 // explain what Coding For Everyone is, then ask user for their experience level

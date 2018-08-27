@@ -4,16 +4,15 @@ import * as util from "util";
 import {interests, levels} from "./links";
 import {log, trace} from "./logging";
 
-// Message to be sent to send api
+// Message to be sent to send API
 // See https://developers.facebook.com/docs/messenger-platform/reference/send-api
 export interface ISendMessage {
     type: MessagingType;
     recipient: string;
-    // TODO make this type safe somehow
     body: any;
 }
 
-// Possible types for a message sent to send api
+// Possible types for a message sent to send API
 // See https://developers.facebook.com/docs/messenger-platform/send-messages/#messaging_types
 export enum MessagingType {
     Response = "RESPONSE",
@@ -30,6 +29,7 @@ export class Messenger {
     }
 
     public sendWelcomeMessage(senderID: string) {
+        trace("Messenger.sendWelcomeMessage");
         this.send({
             type: MessagingType.Response,
             recipient: senderID,
@@ -58,6 +58,7 @@ export class Messenger {
     }
 
     public sendReadyMessage(senderID: string) {
+        trace("Messenger.sendReadyMessage");
         this.send({
             type: MessagingType.Response,
             recipient: senderID,
@@ -68,6 +69,7 @@ export class Messenger {
     }
 
     public sendGenericErrorMessage(senderID: string) {
+        trace("Messenger.sendGenericErrorMessage");
         this.send({
             type: MessagingType.Response,
             recipient: senderID,
@@ -76,6 +78,7 @@ export class Messenger {
     }
 
     public sendNoAttachmentsMessage(senderID: string) {
+        trace("Messenger.sendNoAttachmentsMessage");
         this.send({
             type: MessagingType.Response,
             recipient: senderID,
@@ -84,6 +87,7 @@ export class Messenger {
     }
 
     public sendResource(senderID: string, link: string) {
+        trace("Messenger.sendResource");
         const articleLinkBody = {
             text: link,
         };
@@ -94,7 +98,20 @@ export class Messenger {
         });
     }
 
+    public sendNoResourceFoundMessage(senderID: string) {
+        trace("Messenger.sendNoResourceFoundMessage");
+        this.send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: {
+                text: "Sorry, it looks like we don't have any resources for you right now. " +
+                    "Please check back later!",
+            },
+        });
+    }
+
     public sendLevelRequest(senderID: string) {
+        trace("Messenger.sendLevelRequest");
         const buttons = [];
         for (const level of levels) {
             buttons.push({
@@ -124,6 +141,7 @@ export class Messenger {
     }
 
     public sendInterestRequest(senderID: string) {
+        trace("Messenger.sendInterestRequest");
         const quickReplies = [];
         for (const interest of interests) {
             quickReplies.push({
