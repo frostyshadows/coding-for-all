@@ -2,10 +2,10 @@
   "name": "coding-for-all",
   "version": "1.0.0",
   "description": "a messenger bot for teaching everyone to code",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "tsc && tslint *.ts && echo 'Finished without error!' || echo 'Error!'",
-    "start": "npm run build && node index.js"
+    "start": "npm run build && node src/index.js"
   },
   "repository": {
     "type": "git",
