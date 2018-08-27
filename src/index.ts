@@ -107,6 +107,9 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
     if (message.text === "contribute") {
         return messenger.sendContribMessage(senderID);
     }
+    if (message.text === "help") {
+        return messenger.sendHelpMessage(senderID);
+    }
 
     const options: IOptions = {
         level,
