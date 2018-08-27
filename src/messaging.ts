@@ -52,7 +52,8 @@ export class Messenger {
                     "'article' for an article recommendation, " +
                     "or 'video' if you would like a video. " +
                     "If you would like to change your experience level, please type 'experience'. " +
-                    "To change your area of interest, type 'interest'.",
+                    "To change your area of interest, type 'interest'. " +
+                    "To find out how to contribute new articles to our list, type 'contribute'.",
             },
         });
     }
@@ -106,6 +107,18 @@ export class Messenger {
             body: {
                 text: "Sorry, it looks like we don't have any resources for you right now. " +
                     "Please check back later!",
+            },
+        });
+    }
+
+    public sendContribMessage(senderID: string) {
+        trace("Messenger.sendContribMessage");
+        this.send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: {
+                text: "For details on how to add new articles, " +
+                    "please visit us on Github: https://github.com/frostyshadows/coding-for-all/blob/master/README.md",
             },
         });
     }
