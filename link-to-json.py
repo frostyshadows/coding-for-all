@@ -56,7 +56,7 @@ while not done:
 
     done_str = ""
     while done_str != 'y' and done_str != 'n':
-        done_str = input("Done? (y/n)")
+        done_str = input("Done? (y/n)\n")
     if done_str == 'y':
         done = True
 
@@ -64,7 +64,7 @@ links_file = open("data/links.json", "w")
 json.dump(links, links_file, indent=4, separators=(',', ': '))
 links_file.close()
 
-add_links_cmd = ['git', 'add', 'links.json']
+add_links_cmd = ['git', 'add', 'data/links.json']
 subprocess.check_output(add_links_cmd)
 commit_msg = "New links added by {}".format(username)
 commit_links_cmd = ['git', 'commit', '-m', commit_msg]
