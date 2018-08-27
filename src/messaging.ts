@@ -125,6 +125,17 @@ export class Messenger {
         });
     }
 
+    public sendInvalidTypeMessage(senderID: string) {
+        trace("Messenger.sendInvalidTypeMessage");
+        this.send({
+            type: MessagingType.Response,
+            recipient: senderID,
+            body: {
+                text: "Sorry, that's not a valid resource type!",
+            },
+        });
+    }
+
     public sendLevelRequest(senderID: string) {
         trace("Messenger.sendLevelRequest");
         const buttons = [];

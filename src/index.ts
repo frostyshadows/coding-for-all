@@ -110,7 +110,7 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
 
     const type = message.text.toLowerCase();
     if (!links.checkResourceTypeValidity(type)) {
-        // TODO send invalid type message
+        return messenger.sendInvalidTypeMessage(senderID);
     }
 
     const options: IOptions = {
