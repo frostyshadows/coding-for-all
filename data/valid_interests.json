@@ -1,6 +1,13 @@
 [
-  "android",
-  "ios",
-  "web",
-  "graphics"
+    "ai-ml",
+    "android",
+    "databases",
+    "graphics",
+    "ios",
+    "networking",
+    "programming-languages",
+    "security",
+    "theory",
+    "ui-ux-hci",
+    "web"
 ]
