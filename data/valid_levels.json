@@ -1,5 +1,14 @@
 [
-  "none",
-  "some",
-  "lots"
+    {
+        "title": "None",
+        "value": "none"
+    },
+    {
+        "title": "Some",
+        "value": "some"
+    },
+    {
+        "title": "Lots",
+        "value": "lots"
+    }
 ]

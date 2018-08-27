@@ -1,7 +1,7 @@
 // Encapsulates access to Facebook Messenger API
 import * as request from "request";
 import * as util from "util";
-import {interests} from "./links";
+import {interests, levels} from "./links";
 import {log, trace} from "./logging";
 
 // Message to be sent to send api
@@ -95,6 +95,14 @@ export class Messenger {
     }
 
     public sendLevelRequest(senderID: string) {
+        const buttons = [];
+        for (const level of levels) {
+            buttons.push({
+                type: "postback",
+                title: level.title,
+                payload: util.format("exp_%s", level.value),
+            });
+        }
         const experienceBody = {
             attachment: {
                 type: "template",
@@ -103,23 +111,7 @@ export class Messenger {
                     elements: [{
                         title: "How much programming experience do you have?",
                         subtitle: "Tap a button to answer.",
-                        buttons: [
-                            {
-                                type: "postback",
-                                title: "None",
-                                payload: "exp_none",
-                            },
-                            {
-                                type: "postback",
-                                title: "Some",
-                                payload: "exp_some",
-                            },
-                            {
-                                type: "postback",
-                                title: "Lots",
-                                payload: "exp_lots",
-                            },
-                        ],
+                        buttons,
                     }],
                 },
             },
