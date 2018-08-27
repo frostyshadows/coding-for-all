@@ -8,7 +8,6 @@ import {compareLinks, ILink, IOptions, links} from "./links";
 import {log, trace} from "./logging";
 import {Messenger} from "./messaging";
 
-// Get page access token from environment variable
 const pageAccessToken: string | undefined = process.env.PAGE_ACCESS_TOKEN;
 if (isNullOrUndefined(pageAccessToken)) {
     log("Missing page access token in env vars");
@@ -19,13 +18,11 @@ const app = express().use(bodyParser.json()).use(helmet());
 const db = new Database();
 const messenger = new Messenger(pageAccessToken as string);
 
-// flag for interest
 let askedInterest = false;
 
-// sort links
 // organized by interest, then level, then type
 links.sort(compareLinks);
-trace(JSON.stringify(links));
+log(JSON.stringify(links));
 
 // Set server port
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
@@ -34,29 +31,22 @@ app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
 app.post("/webhook", (req, res) => {
     trace("Post request handled");
     const body = req.body;
-    // Checks if this is an event from a page subscription
     if (body.object === "page") {
-        // Iterates over each entry - there may be multiple if batched
         body.entry.forEach((entry: any) => {
             // Gets the message. entry.messaging is an array, but
             // will only ever contain one message, so we get index 0
             const webhookEvent = entry.messaging[0];
             log(webhookEvent.toString());
 
-            // Get the sender PSID
             const senderID: string = webhookEvent.sender.id;
-            // Route event to appropriate handler
             if (webhookEvent.message) {
                 handleMessage(senderID, webhookEvent.message);
             } else if (webhookEvent.postback) {
                 handlePostback(senderID, webhookEvent.postback);
             }
         });
-
-        // Returns a '200 OK' response to all requests
         res.status(200).send("EVENT_RECEIVED");
     } else {
-        // Returns a '404 Not Found' if event is not from a page subscription
         res.sendStatus(404);
     }
 
@@ -65,25 +55,15 @@ app.post("/webhook", (req, res) => {
 // Create GET endpoint for webhook
 app.get("/webhook", (req, res) => {
     trace("Get request handled");
-    // Your verify token. Should be a random string.
     const VERIFY_TOKEN = "hi_russell";
 
-    // Parse the query params
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
 
-    // Checks if a token and mode is in the query string of the request
-    if (mode && token) {
-        // Checks the mode and token sent is correct
-        if (mode === "subscribe" && token === VERIFY_TOKEN) {
-            // Responds with the challenge token from the request
-            log("WEBHOOK_VERIFIED");
-            res.status(200).send(challenge);
-        } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
-            res.sendStatus(403);
-        }
+    if (mode && token && mode === "subscribe" && token === VERIFY_TOKEN) {
+        log("WEBHOOK_VERIFIED");
+        res.status(200).send(challenge);
     } else {
         res.sendStatus(403);
     }
@@ -120,14 +100,12 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
 
     // let user select a different experience level
     if (message.text === "experience") {
-        askExperience(senderID);
-        return;
+        return messenger.sendLevelRequest(senderID);
     }
 
     // let user select a different field of interest
     if (message.text === "interest") {
-        askInterest(senderID);
-        return;
+        return askInterest(senderID);
     }
 
     const options: IOptions = {
@@ -157,7 +135,7 @@ export function generateRandomLink(level: string, interest: string, type: string
     });
 
     if (start === -1) {
-        throw new Error("no article found");
+        throw new Error("No article found");
     }
 
     let end: number = start + 1;
@@ -170,7 +148,7 @@ export function generateRandomLink(level: string, interest: string, type: string
         }
     }
 
-    trace("start index: " + start + ", end index: " + end);
+    log("start index: " + start + ", end index: " + end);
     const randomIndex = Math.floor(Math.random() * (end - start) + start);
 
     return links[randomIndex];
@@ -182,12 +160,6 @@ function sendNewUserMessage(senderID: string, message: any) {
     messenger.sendWelcomeMessage(senderID);
     // TODO: might make more sense to ask field of interest first?
     db.insertNewEmptyUser(senderID);
-    askExperience(senderID);
-}
-
-// ask user what their experience level is
-function askExperience(senderID: string) {
-    trace("askExperience");
     messenger.sendLevelRequest(senderID);
 }
 
@@ -209,7 +181,7 @@ function handlePostback(senderID: string, postback: any) {
 
 function handleExpPostback(senderID: string, expLevel: string) {
     trace("handleExpPostback");
-    trace("expLevel: " + expLevel);
+    log("expLevel: " + expLevel);
     db.updateLevel(senderID, expLevel);
     if (!askedInterest) {
         askInterest(senderID);
