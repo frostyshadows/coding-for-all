@@ -1,7 +1,7 @@
 // Encapsulates access to Facebook Messenger API
 import * as request from "request";
 import * as util from "util";
-import {interests, levels} from "./links";
+import {Links} from "./links";
 import {log, trace} from "./logging";
 
 // Message to be sent to send API
@@ -23,9 +23,11 @@ export enum MessagingType {
 // Send a message via the send api
 export class Messenger {
     private pageAccessToken: string;
+    private links: Links;
 
-    constructor(pageAccessToken: string) {
+    constructor(pageAccessToken: string, links: Links) {
         this.pageAccessToken = pageAccessToken;
+        this.links = links;
     }
 
     public sendWelcomeMessage(senderID: string) {
@@ -126,7 +128,7 @@ export class Messenger {
     public sendLevelRequest(senderID: string) {
         trace("Messenger.sendLevelRequest");
         const buttons = [];
-        for (const level of levels) {
+        for (const level of this.links.levels) {
             buttons.push({
                 type: "postback",
                 title: level.title,
@@ -156,7 +158,7 @@ export class Messenger {
     public sendInterestRequest(senderID: string) {
         trace("Messenger.sendInterestRequest");
         const quickReplies = [];
-        for (const interest of interests) {
+        for (const interest of this.links.interests) {
             quickReplies.push({
                 content_type: "text",
                 title: interest.title,

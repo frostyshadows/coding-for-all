@@ -4,7 +4,7 @@ import * as express from "express";
 import * as helmet from "helmet";
 import {isNullOrUndefined} from "util";
 import {Database} from "./database";
-import {compareLinks, generateRandomLink, ILink, IOptions, links} from "./links";
+import {IOptions, Links} from "./links";
 import {log, trace} from "./logging";
 import {Messenger} from "./messaging";
 
@@ -16,13 +16,10 @@ if (isNullOrUndefined(pageAccessToken)) {
 
 const app = express().use(bodyParser.json()).use(helmet());
 const db = new Database();
-const messenger = new Messenger(pageAccessToken as string);
+const links = new Links();
+const messenger = new Messenger(pageAccessToken as string, links);
 
 let askedInterest = false;
-
-// organized by interest, then level, then type
-links.sort(compareLinks);
-log(JSON.stringify(links));
 
 // Set server port
 app.listen(process.env.PORT || 1337, () => log("Webhook is listening"));
@@ -111,15 +108,20 @@ function sendExistingUserMessage(senderID: string, level: string, interest: stri
         return messenger.sendHelpMessage(senderID);
     }
 
+    const type = message.text.toLowerCase();
+    if (!links.checkResourceTypeValidity(type)) {
+        // TODO send invalid type message
+    }
+
     const options: IOptions = {
         level,
         interest,
-        type: message.text.toLowerCase(),
+        type,
     };
     log("User options: " + JSON.stringify(options));
 
     try {
-        const link = generateRandomLink(options);
+        const link = links.generateRandomLink(options);
         messenger.sendResource(senderID, link.link);
     } catch (e) {
         log("No random link matching the given options found");
