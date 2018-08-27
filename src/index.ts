@@ -5,7 +5,7 @@ import * as helmet from "helmet";
 import * as fs from "fs";
 import {Database} from "./database";
 import {isNullOrUndefined} from "util";
-import {compareLinks, ILink, IOptions, Level, Interest, ResourceType} from "./links";
+import {compareLinks, ILink, IOptions} from "./links";
 import {log, trace} from "./logging";
 import {Messenger} from "./messaging";
 
@@ -117,7 +117,7 @@ function handleMessage(senderID: string, message: any) {
     }
 }
 
-function sendExistingUserMessage(senderID: string, expLevel: Level, interest: Interest, message: any) {
+function sendExistingUserMessage(senderID: string, level: string, interest: string, message: any) {
     trace("sendExistingUserMessage");
 
     // let user select a different experience level
@@ -133,16 +133,16 @@ function sendExistingUserMessage(senderID: string, expLevel: Level, interest: In
     }
 
     const options: IOptions = {
-        level: expLevel,
+        level,
         interest,
         type: message.text.toLowerCase(),
     };
     log("User options: " + JSON.stringify(options));
     // find a link that matches their profile and requested article type
 
-    const link = generateRandomLink(interest, expLevel, message.text.toLowerCase());
+    const link = generateRandomLink(interest, level, message.text.toLowerCase());
     if (link !== null && link.options.interest === interest &&
-        link.options.level === expLevel &&
+        link.options.level === level &&
         link.options.type === message.text.toLowerCase()) {
         messenger.sendResource(senderID, link.link);
         return;
@@ -151,11 +151,11 @@ function sendExistingUserMessage(senderID: string, expLevel: Level, interest: In
     messenger.sendHelpMessage(senderID);
 }
 
-export function generateRandomLink(interest: string, expLevel: string, type: string): ILink {
+export function generateRandomLink(level: string, interest: string, type: string): ILink {
     trace("generateRandomLink");
     const start: number = links.findIndex(function (currentLink) {
         return (currentLink.options.interest === interest) &&
-            (currentLink.options.level === expLevel) &&
+            (currentLink.options.level === level) &&
             (currentLink.options.type === type);
     });
 
@@ -166,7 +166,7 @@ export function generateRandomLink(interest: string, expLevel: string, type: str
     let end: number = start + 1;
     for (let i = start; i < links.length; i++) {
         if ((links[i].options.interest !== interest) ||
-            (links[i].options.level !== expLevel) ||
+            (links[i].options.level !== level) ||
             (links[i].options.type !== type)) {
             end = i;
             break;
