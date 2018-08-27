@@ -56,7 +56,7 @@ while not done:
 
     done_str = ""
     while done_str != 'y' and done_str != 'n':
-        done_str = input("Done? (y/n)")
+        done_str = input("Done? (y/n)\n")
     if done_str == 'y':
         done = True
 
