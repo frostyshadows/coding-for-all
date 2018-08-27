@@ -7,10 +7,10 @@ export class Database {
 
     constructor() {
         sqlite3.verbose();
-        this.db = new sqlite3.Database(":memory:");
+        this.db = new sqlite3.Database("users.db");
 
         this.db.serialize(() => {
-            this.db.run("CREATE TABLE users (" +
+            this.db.run("CREATE TABLE IF NOT EXISTS users (" +
                 "senderID TEXT," +
                 "ExpLevel TEXT," +
                 "Interests TEXT)");
