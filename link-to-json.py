@@ -13,7 +13,10 @@ create_branch_cmd = ['git', 'checkout', '-b', branch_name]
 subprocess.check_output(create_branch_cmd)
 
 valid_levels = json.load(open('data/valid_levels.json', 'r'))
-valid_interests = json.load(open('data/valid_interests.json', 'r'))
+interests_data = json.load(open('data/valid_interests.json', 'r'))
+valid_interests = []
+for interest in interests_data:
+    valid_interests.append(interest['value'])
 valid_types = json.load(open('data/valid_resource_types.json', 'r'))
 
 links_file = open("data/links.json", "r")

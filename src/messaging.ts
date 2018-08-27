@@ -1,5 +1,7 @@
 // Encapsulates access to Facebook Messenger API
 import * as request from "request";
+import * as util from "util";
+import {interests} from "./links";
 import {log, trace} from "./logging";
 
 // Message to be sent to send api
@@ -130,65 +132,17 @@ export class Messenger {
     }
 
     public sendInterestRequest(senderID: string) {
+        const quickReplies = [];
+        for (const interest of interests) {
+            quickReplies.push({
+                content_type: "text",
+                title: interest.title,
+                payload: util.format("interest_%s", interest.value),
+            });
+        }
         const interestBody = {
             text: "Which field of Computer Science would you like to learn more about?",
-            quick_replies: [
-                {
-                    content_type: "text",
-                    title: "Android",
-                    payload: "interest_android",
-                },
-                {
-                    content_type: "text",
-                    title: "iOS",
-                    payload: "interest_ios",
-                },
-                {
-                    content_type: "text",
-                    title: "web dev",
-                    payload: "interest_web",
-                },
-                {
-                    content_type: "text",
-                    title: "AI/ML",
-                    payload: "interest_ai-ml",
-                },
-                {
-                    content_type: "text",
-                    title: "graphics",
-                    payload: "interest_graphics",
-                },
-                {
-                    content_type: "text",
-                    title: "security",
-                    payload: "interest_security",
-                },
-                {
-                    content_type: "text",
-                    title: "UI/UX/HCI",
-                    payload: "interest_ui-ux-hci",
-                },
-                {
-                    content_type: "text",
-                    title: "databases",
-                    payload: "interest_databases",
-                },
-                {
-                    content_type: "text",
-                    title: "programming languages",
-                    payload: "interest_programming-languages",
-                },
-                {
-                    content_type: "text",
-                    title: "networking",
-                    payload: "interest_networking",
-                },
-                {
-                    content_type: "text",
-                    title: "theory",
-                    payload: "interest_theory",
-                },
-            ],
+            quick_replies: quickReplies,
         };
         this.send({
             type: MessagingType.Response,

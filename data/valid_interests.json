@@ -1,13 +1,46 @@
 [
-    "ai-ml",
-    "android",
-    "databases",
-    "graphics",
-    "ios",
-    "networking",
-    "programming-languages",
-    "security",
-    "theory",
-    "ui-ux-hci",
-    "web"
+    {
+        "title": "AI/ML",
+        "value": "ai-ml"
+    },
+    {
+        "title": "Android",
+        "value": "android"
+    },
+    {
+        "title": "Databases",
+        "value": "databases"
+    },
+    {
+        "title": "Computer Graphics",
+        "value": "graphics"
+    },
+    {
+        "title": "iOS",
+        "value": "ios"
+    },
+    {
+        "title": "Computer Networking",
+        "value": "networking"
+    },
+    {
+        "title": "Programming Languages",
+        "value": "plt"
+    },
+    {
+        "title": "Computer Security",
+        "value": "security"
+    },
+    {
+        "title": "Algorithms, Data Structures, & Theory",
+        "value": "theory"
+    },
+    {
+        "title": "UI/UX & Human-Computer Interaction",
+        "value": "ui-ux-hci"
+    },
+    {
+        "title": "Web Development",
+        "value": "web"
+    }
 ]
